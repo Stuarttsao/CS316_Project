@@ -43,6 +43,10 @@ def gen_users(num_users):
     return available_uids
     
 def gen_drinks(num_drinks):
+    available_dids = []
+    with open('Drinks.csv', 'w') as f:
+        writer = get_csv_writer(f)
+    for pid in range(num_drinks):
     return available_dids
     
 def gen_ingredients(num_ingredients):

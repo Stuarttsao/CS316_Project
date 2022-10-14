@@ -104,23 +104,24 @@ def gen_menus(num_menus, uids):
             summary = fake.sentence(nb_words=8)[:-1]
             uid = fake.random_element(elements=uids)
             date = fake.date_time()
-            menu_names.append(name)
+            menu_names.append([uid, name])
             writer.writerow([uid, name, date, summary])
         print(f'{num_menus} generated')
     return menu_names
     
-def gen_menu_drinks(num_menu_drinks, uids, menu_names, dids):
+def gen_menu_drinks(num_menu_drinks, menu_names, dids):
     with open('Menu_Drinks.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Menu_Drinks...', end=' ', flush=True)
         for id in range(num_menu_drinks):
             if id % 50 == 0:
                 print(f'{id}', end=' ', flush=True)
-            uid = fake.random_element(elements=uids)
             did = fake.random_element(elements=dids)
             menu_name_id = fake.random_int(min=0, max=len(menu_names)-1)
+            uid = menu_names[menu_name_id][0]
+            menu_name = menu_names[menu_name_id][1]
             link = fake.domain_name(1)
-            writer.writerow([uid, menu_names[menu_name_id], did, link])
+            writer.writerow([uid, menu_name, did, link])
         print(f'{num_menu_drinks} generated')
     return
     
@@ -208,7 +209,7 @@ uids = gen_users(num_users)
 dids = gen_drinks(num_drinks)
 iids = gen_ingredients(num_ingredients)
 menu_names = gen_menus(num_menus, uids)
-gen_menu_drinks(num_menu_drinks, uids, menu_names, dids)
+gen_menu_drinks(num_menu_drinks, menu_names, dids)
 gen_ingredient_cart(num_ingredient_carts, uids, iids)
 gen_components(num_components, dids, iids)
 gen_bar_cart(num_bar_carts, uids, dids)

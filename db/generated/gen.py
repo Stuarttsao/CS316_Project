@@ -1,21 +1,53 @@
 from werkzeug.security import generate_password_hash
 import csv
 from faker import Faker
+import pandas as pd
+import numpy as np
+
+#GETTING USABLE DATA FROM COCKTAIL DB AFTER SCRAPING----------------------------------------------------------
+
+cocktail_df = pd.read_csv('repository.csv')
+drink_names = cocktail_df['name'].values.tolist()
+drink_category = cocktail_df['category'].values.tolist()
+drink_instructions = cocktail_df['instructions'].values.tolist()
+drink_images = cocktail_df['imageUrl'].values.tolist()
+ingredient_cols = cocktail_df.columns[cocktail_df.columns.str.startswith('ingredients')]
+ingredient_cols = [col for col in ingredient_cols if col.endswith('name')]
+ingredient_names = pd.unique(cocktail_df[ingredient_cols].values.ravel()).tolist()
+
+components = []
+with open('repository.csv') as file_obj:
+    reader_obj = csv.reader(file_obj)
+    next(reader_obj)
+    ingredient_ind = np.array([i for i in range(31) if (i >= 7) and (i % 2 == 1)])
+    for row in reader_obj:
+        row = np.array(row)
+        drink = row[1]
+        ingredients = row[ingredient_ind]
+        measures = row[ingredient_ind+1]
+        for i in range(len(ingredients)):
+            ingredient = ingredients[i]
+            if ingredient != '':
+                measure_amount = measures[i].split(' ')
+                measure = measure_amount[0]
+                if len(measure_amount) > 1:
+                    amount = measure_amount[1]
+                components.append([drink, ingredient, measure, amount])
+
+components = np.array(components)
+units = list(set(components[:,3]))
+
+#GETTING USABLE DATA FROM COCKTAIL DB AFTER SCRAPING----------------------------------------------------------
 
 num_users = 20
-num_drinks = 100
-num_ingredients = 200
-num_components = 1000
+num_drinks = len(drink_names)
+num_ingredients = len(ingredient_names)
+num_components = len(components)
 num_menus = 50
 num_menu_drinks = 300
 num_ingredient_carts = 400
 num_bar_carts = 100
 num_ratings = 1000
-
-units = ["oz", "count", "garnish", "mL", "cups"]
-
-#num_products = 2000
-#num_purchases = 2500
 
 Faker.seed(0)
 fake = Faker()
@@ -53,12 +85,13 @@ def gen_drinks(num_drinks):
         for did in range(num_drinks):
             if did % 50 == 0:
                 print(f'{did}', end=' ', flush=True)
-            name = fake.sentence(nb_words=2)[:-1]
-            category = fake.sentence(nb_words=2)[:-1]
-            instructions = fake.sentence(nb_words=8)[:-1]
-            description = fake.sentence(nb_words=8)[:-1]
+            name = drink_names[did]
+            category = drink_category[did]
+            instructions = drink_instructions[did]
+            #description = fake.sentence(nb_words=8)[:-1]
+            image_url_id = fake.random_int(min=0, max=len(drink_images)-1)
             dids.append(did)
-            writer.writerow([did, name, category, instructions, description])
+            writer.writerow([did, name, category, drink_images[image_url_id], instructions])##, description])
         print(f'{num_drinks} generated')
     return dids
     
@@ -70,10 +103,10 @@ def gen_ingredients(num_ingredients):
         for iid in range(num_ingredients):
             if iid % 100 == 0:
                 print(f'{iid}', end=' ', flush=True)
-            name = fake.sentence(nb_words=2)[:-1]
-            description = fake.sentence(nb_words=8)[:-1]
+            name = ingredient_names[iid]
+            #description = fake.sentence(nb_words=8)[:-1]
             iids.append(iid)
-            writer.writerow([iid, name, description])
+            writer.writerow([iid, name])#, description])
         print(f'{num_ingredients} generated')
     return iids
     
@@ -84,11 +117,16 @@ def gen_components(num_components, dids, iids):
         for id in range(num_components):
             if id % 100 == 0:
                 print(f'{id}', end=' ', flush=True)
-            did = fake.random_element(elements=dids)
-            iid = fake.random_element(elements=iids)
-            amount = fake.random_int(min=0, max=100)
-            unitid = fake.random_int(min=0, max=len(units)-1)
-            writer.writerow([iid, did, amount, units[unitid]])
+            component = components[id]
+            did = 'WRONG INPUT'
+            if (component[0] in drink_names):
+                did = drink_names.index(component[0])
+            iid = 'WRONG INPUT'
+            if (component[1] in ingredient_names):
+                iid = ingredient_names.index(component[1])
+            amount = component[2]
+            unit = component[3]
+            writer.writerow([iid, did, amount, unit])
         print(f'{num_components} generated')
     return
 

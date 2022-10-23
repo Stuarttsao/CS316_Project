@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HTML Page with search bar and search button -->
+<h1>Search for User Ratings</h1>
+<form action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.search.label }}<br/>
+    {{ form.search(size=32) }}<br/>
+    {% for error in form.search.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ form.submit(class_="btn btn-black") }}
+
+<!-- list of ratings returned from search -->
+
+{% if ratings %}
+<h2>Ratings</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">User ID</th>
+      <th scope="col">Drink ID</th>
+      <th scope="col">Rating Date</th>
+      <th scope="col">Score</th>
+      <th scope="col">Review</th>
+      <th scope="col">Likes</th>
+      <th scope="col">Dislikes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for rating in ratings %}
+      <tr>
+        <th scope="row">{{rating.uid}}</th>
+        <td>{{rating.did}}</td>
+        <td>{{rating.date}}</td>
+        <td>{{rating.score}}</td>
+        <td>{{rating.description}}</td>
+        <td>{{rating.likes}}</td>
+        <td>{{rating.dislikes}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

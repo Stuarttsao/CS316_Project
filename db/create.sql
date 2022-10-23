@@ -64,17 +64,19 @@ CREATE TABLE Components(
     FOREIGN KEY(did) REFERENCES Drinks(did)
 );
 
--- CREATE TABLE Ratings(
---     FOREIGN KEY(uid) REFERENCES Users(uid),
---     FOREIGN KEY(did) REFERENCES Drinks(did),
---     time_rated timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
---     score INT NOT NULL,
---     CONSTRAINT score_ck CHECK (score BETWEEN 1 AND 10),
---     description VARCHAR(8000),
---     likes INT NOT NULL,
---     dislikes INT NOT NULL
---     PRIMARY KEY(uid,did)
--- );
+CREATE TABLE Ratings(
+    uid Int NOT NULL REFERENCES Users(uid),
+    did Int NOT NULL REFERENCES Drinks(did),
+    time_rated timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    score INT NOT NULL,
+    CONSTRAINT score_ck CHECK (score BETWEEN 0 AND 5),
+    descript VARCHAR(8000),
+    likes INT NOT NULL,
+    dislikes INT NOT NULL,
+    --PRIMARY KEY(uid,did), GO BACK AND ENFORCE UNIQUENESS
+    FOREIGN KEY(uid) REFERENCES Users(uid),
+    FOREIGN KEY(did) REFERENCES Drinks(did)
+);
 
 -- CREATE TABLE ingredientCart(
 --     FOREIGN KEY(uid) REFERENCES Users(uid),

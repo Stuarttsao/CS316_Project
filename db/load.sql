@@ -13,6 +13,10 @@ SELECT pg_catalog.setval('public.drinks_did_seq',
                          false);
 
 \COPY Ratings FROM 'Ratings.csv' WITH DELIMITER ',' NULL '' CSV; 
+
+\COPY Menus FROM 'Menus.csv' WITH DELIMITER ',' NULL '' CSV; 
+
+\COPY MenuDrinks FROM 'Menu_Drinks.csv' WITH DELIMITER ',' NULL '' CSV; 
 --WITH DELIMITER ',' NULL '' CSV
 -- SELECT pg_catalog.setval('public.ratings_id_seq',
 --                          (SELECT MAX(did)+1 FROM Drinks),

@@ -14,6 +14,7 @@ from .models.purchase import Purchase
 from .models.user import User
 from .models.drinks import Drinks
 from .models.ratings import Ratings
+from .models.menus import Menus
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -43,4 +44,13 @@ def social():
         rating = Ratings.get_most_recent(form.search.data)    
         print(rating) 
     return render_template('social.html', title='Rating', form=form, ratings=rating)
+
+@bp.route('/menus', methods=['GET', 'POST'])
+def menu():
+    form = SearchForm()
+    menu = []
+    if form.validate_on_submit():
+        menu = Menus.get_most_recent(form.search.data)    
+        print(menu) 
+    return render_template('menu.html', title='Menu', form=form, menus=menu)
 

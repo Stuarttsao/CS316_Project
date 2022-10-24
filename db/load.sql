@@ -12,6 +12,12 @@ SELECT pg_catalog.setval('public.drinks_did_seq',
                          (SELECT MAX(did)+1 FROM Drinks),
                          false);
 
+\COPY Ratings FROM 'Ratings.csv' WITH DELIMITER ',' NULL '' CSV; 
+--WITH DELIMITER ',' NULL '' CSV
+-- SELECT pg_catalog.setval('public.ratings_id_seq',
+--                          (SELECT MAX(did)+1 FROM Drinks),
+--                          false);
+
 -- \COPY Ingredients FROM 'Ingredients.csv' WITH DELIMITER ',' NULL '' CSV
 -- SELECT pg_catalog.setval('public.ingredients_iid_seq',
 --                          (SELECT MAX(iid)+1 FROM Ingredients),

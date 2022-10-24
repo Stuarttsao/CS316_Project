@@ -13,6 +13,7 @@ from .models.product import Product
 from .models.purchase import Purchase
 from .models.user import User
 from .models.drinks import Drinks
+from .models.ratings import Ratings
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -32,4 +33,14 @@ def index():
         drink = Drinks.get_by_name(form.search.data)    
         print(drink) 
     return render_template('index2.html', title='Home', form=form, drinks=drink)
+
+    
+@bp.route('/ratings', methods=['GET', 'POST'])
+def social():
+    form = SearchForm()
+    rating = []
+    if form.validate_on_submit():
+        rating = Ratings.get_most_recent(form.search.data)    
+        print(rating) 
+    return render_template('social.html', title='Rating', form=form, ratings=rating)
 

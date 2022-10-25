@@ -33,7 +33,7 @@ def index():
     if form.validate_on_submit():
         drink = Drinks.get_by_name(form.search.data)    
         print(drink) 
-    return render_template('index2.html', title='Home', form=form, drinks=drink)
+    return render_template('drinks.html', title='Home', form=form, drinks=drink)
 
     
 @bp.route('/ratings', methods=['GET', 'POST'])

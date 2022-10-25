@@ -4,6 +4,7 @@
 
 <!-- HTML Page with search bar and search button -->
 <h1>Search for a Drink</h1>
+
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
   <p>
@@ -19,6 +20,8 @@
 
 {% if drinks %}
 <h2>Drinks</h2>
+
+
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
@@ -30,6 +33,9 @@
     </tr>
   </thead>
   <tbody>
+
+
+
     {% for drink in drinks %}
       <tr>
         <th scope="row">{{drink.did}}</th>

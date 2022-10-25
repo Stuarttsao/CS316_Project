@@ -22,10 +22,12 @@ SELECT pg_catalog.setval('public.drinks_did_seq',
 --                          (SELECT MAX(did)+1 FROM Drinks),
 --                          false);
 
--- \COPY Ingredients FROM 'Ingredients.csv' WITH DELIMITER ',' NULL '' CSV
--- SELECT pg_catalog.setval('public.ingredients_iid_seq',
---                          (SELECT MAX(iid)+1 FROM Ingredients),
---                          false);
+\COPY Ingredients FROM 'Ingredients.csv' WITH DELIMITER ',' NULL '' CSV header encoding 'windows-1251';
+SELECT pg_catalog.setval('public.ingredients_iid_seq',
+                         (SELECT MAX(iid)+1 FROM Ingredients),
+                         false);
+
+\COPY ingredientCart FROM 'IngredientCart.csv' WITH DELIMITER ',' NULL '' CSV
 
 -- \COPY Components FROM 'Components.csv' WITH DELIMITER ',' NULL '' CSV
 -- SELECT pg_catalog.setval('public.components_iid_seq',

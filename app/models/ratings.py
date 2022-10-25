@@ -24,7 +24,7 @@ FROM Ratings
 WHERE uid = :uid
 ''',
                               uid=uid)
-        return Ratings(*(rows[0])) if rows else None
+        return Ratings(*rows) if rows else None
 
     @staticmethod
     def get_most_recent(uid):

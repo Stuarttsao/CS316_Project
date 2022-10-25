@@ -29,6 +29,8 @@ SELECT pg_catalog.setval('public.ingredients_iid_seq',
 
 \COPY ingredientCart FROM 'IngredientCart.csv' WITH DELIMITER ',' NULL '' CSV
 
+\COPY Components FROM 'Components.csv' WITH DELIMITER ',' NULL '' CSV header encoding 'windows-1251' ;
+
 -- \COPY Components FROM 'Components.csv' WITH DELIMITER ',' NULL '' CSV
 -- SELECT pg_catalog.setval('public.components_iid_seq',
 --                          (SELECT MAX(iid)+1 FROM Components),

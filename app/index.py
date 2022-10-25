@@ -16,6 +16,7 @@ from .models.drinks import Drinks
 from .models.ratings import Ratings
 from .models.menus import Menus
 from .models.ingredientCart import IngredientCart
+from .models.ingredients import Ingredients
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -63,4 +64,13 @@ def cartIndex():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         print(ingredient) 
     return render_template('cart.html', title='IngredientCart', form=form, ingredients=ingredient)
+
+@bp.route('/recommendations', methods=['GET', 'POST'])
+def recommend():
+    form = SearchForm()
+    drink = []
+    if form.validate_on_submit():
+        drink = Ingredients.get_by_ingredient(form.search.data) 
+        print(drink)
+    return render_template('recommendations.html', title='Recommendations', form=form, drinks=drink)
 

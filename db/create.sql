@@ -55,13 +55,13 @@ CREATE TABLE Ingredients(
 );
 
 CREATE TABLE Components(
-    iid INT NOT NULL REFERENCES Ingredients(iid),
-    did INT NOT NULL REFERENCES Drinks(did),
-    amount FLOAT NOT NULL,
-    unit VARCHAR(255) NOT NULL,
-    PRIMARY KEY(iid, did),
-    FOREIGN KEY(iid) REFERENCES Ingredients(iid),
-    FOREIGN KEY(did) REFERENCES Drinks(did)
+    iid INT NOT NULL,
+    did INT NOT NULL,
+    amount VARCHAR(255),
+    unit VARCHAR(255)
+    --PRIMARY KEY(iid, did),
+    --FOREIGN KEY(iid) REFERENCES Ingredients(iid),
+    --FOREIGN KEY(did) REFERENCES Drinks(did)
 );
 
 CREATE TABLE Ratings(

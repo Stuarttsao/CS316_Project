@@ -2,50 +2,41 @@
 
 {% block content %}
 
-<!-- HTML Page with search bar and search button -->
-<h1>Search for a Drink</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/drinks.css') }}">
 
-<form action="" method="post" novalidate>
-  {{ form.hidden_tag() }}
-  <p>
-    {{ form.search.label }}<br/>
-    {{ form.search(size=32) }}<br/>
-    {% for error in form.search.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
+
+<form autocomplete="off"><input type="text" name="q" id="q" onKeyUp="showResults(this.value)" method="post" novalidate />
   {{ form.submit(class_="btn btn-black") }}
+  
+<div id="result"></div>
 
-<!-- list of drinks returned from search -->
+{% block scripts %}
+<script>
+  var search_terms = ['apple', 'apple watch', 'apple macbook', 'apple macbook pro', 'iphone', 'iphone 12'];
 
-{% if drinks %}
-<h2>Drinks</h2>
+  function autocompleteMatch(input) {
+    if (input == '') {
+      return [];
+    }
+    var reg = new RegExp(input)
+    return search_terms.filter(function (term) {
+      if (term.match(reg)) {
+        return term;
+      }
+    });
+  }
 
-
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Drink ID</th>
-      <th scope="col">Drink Name</th>
-      <th scope="col">Category</th>
-      <th scope="col">Instruction</th>
-
-    </tr>
-  </thead>
-  <tbody>
-
-
-
-    {% for drink in drinks %}
-      <tr>
-        <th scope="row">{{drink.did}}</th>
-        <td>{{drink.name}}</td>
-        <td>{{drink.category}}</td>
-        <td>{{drink.instructions}}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+  function showResults(val) {
+    res = document.getElementById("result");
+    res.innerHTML = '';
+    let list = '';
+    let terms = autocompleteMatch(val);
+    for (i = 0; i < terms.length; i++) {
+      list += '<li>' + terms[i] + '</li>';
+    }
+    res.innerHTML = '<ul>' + list + '</ul>';
+  }
+</script>
+{% endblock %}
 
 {% endblock %}

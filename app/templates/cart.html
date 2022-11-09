@@ -18,11 +18,11 @@
   <!-- list of ingredients returned from search -->
 
 {% if ingredients %}
-<h2>Ingredients</h2>
+<h2>Ingredients Cart</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Ingredient ID</th>
+      <th scope="col">Ingredients</th>
       <th scope="col">Amount</th>
       <th scope="col">Units</th>
 
@@ -31,13 +31,84 @@
   <tbody>
     {% for ingredient in ingredients %}
       <tr>
-        <th scope="row">{{ingredient.iid}}</th>
+        <th scope="row">{{ingredient.name}}</th>
         <td>{{ingredient.amount}}</td>
         <td>{{ingredient.unit}}</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+
+
 {% endif %}
+
+{% if makable %}
+<h2>Drinks you can make with these ingredients:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink Name</th> 
+    </tr>
+  </thead>
+  <tbody>
+    {% for drink in makable %}
+      <tr>
+        <th scope="row">{{drink.name}}</th>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+
+
+<h1>Clear User Cart: Enter User ID</h1>
+<form action="" method="post" novalidate>
+  {{ deleteCart.hidden_tag() }}
+  <p>
+    {{ deleteCart.userID1.label }}<br/>
+    {{ deleteCart.userID1(size=32) }}<br/>
+    {% for error in deleteCart.userID1.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ deleteCart.submit1(class_="btn btn-black") }}
+
+
+<h1>Add Ingredient to UserCart</h1>
+<form action="" method="post" novalidate>
+  {{ addCart.hidden_tag() }}
+  <p>
+    {{ addCart.userID2.label }}<br/>
+    {{ addCart.userID2(size=32) }}<br/>
+    {% for error in addCart.userID2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.ingredientID.label }}<br/>
+    {{ addCart.ingredientID(size=32) }}<br/>
+    {% for error in addCart.ingredientID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.amount.label }}<br/>
+    {{ addCart.amount(size=32) }}<br/>
+    {% for error in addCart.amount.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.unit.label }}<br/>
+    {{ addCart.unit(size=32) }}<br/>
+    {% for error in addCart.unit.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ addCart.submit2(class_="btn btn-black") }}
+
+
 
 {% endblock %}

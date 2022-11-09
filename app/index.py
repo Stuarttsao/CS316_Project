@@ -47,6 +47,8 @@ class addCartForm(FlaskForm):
     submit2 = SubmitField('Add to Cart')
 
 
+
+
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
@@ -118,7 +120,14 @@ def cartIndex():
 
     if form.submit.data and form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
-        print(ingredient) 
+        
+        iidList = []
+        for i in ingredient:
+            iidList.append(i.iid)
+        print(iidList)
+
+        makable = IngredientCart.search_by_cart(iidList)
+        print(makable)
 
     return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient)
 

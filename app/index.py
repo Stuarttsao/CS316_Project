@@ -33,18 +33,18 @@ class addDrinkForm(FlaskForm):
     drinkCategory = StringField('Drink Category', validators=[DataRequired()])
     drinkInstructions = StringField('Drink Instructions', validators=[DataRequired()])
     drinkImage = StringField('Drink Image', validators=[DataRequired()])
-    submit = SubmitField('Add Drink')
+    submit1 = SubmitField('Add Drink')
 
 class deleteCartForm(FlaskForm):
-    userID = StringField('User ID', validators=[DataRequired()])
-    submit = SubmitField('Delete Cart')
+    userID1 = StringField('User ID', validators=[DataRequired()])
+    submit1 = SubmitField('Delete Cart')
 
 class addCartForm(FlaskForm):
-    userID = StringField('User ID', validators=[DataRequired()])
+    userID2 = StringField('User ID', validators=[DataRequired()])
     ingredientID = StringField('Ingredient ID', validators=[DataRequired()])
     amount = StringField('Amount', validators=[DataRequired()])
     unit = StringField('Unit', validators=[DataRequired()])
-    submit = SubmitField('Add to Cart')
+    submit2 = SubmitField('Add to Cart')
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -53,7 +53,7 @@ def index():
     drinks = []
     ingredients = []
 
-    if form.validate_on_submit():
+    if form.submit.data and form.validate_on_submit():
         drinks = Drinks.get_by_name(form.search.data) 
            
         print(drinks) 
@@ -65,7 +65,7 @@ def index():
 
         # add drinks to database
     addDrink = addDrinkForm()
-    if addDrink.validate_on_submit():
+    if addDrink.submit1.data and addDrink.validate_on_submit():
         drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
         drink.insert()
         print(drink)
@@ -101,14 +101,14 @@ def cartIndex():
 
     # delete cart
     deleteCart = deleteCartForm()
-    if deleteCart.validate_on_submit():
-        IngredientCart.remove_all_by_uid(deleteCart.userID.data)
+    if deleteCart.submit1.data and deleteCart.validate_on_submit():
+        IngredientCart.remove_all_by_uid(deleteCart.userID1.data)
     
     # add to cart
     addCart = addCartForm()
-    if addCart.validate():
+    if addCart.submit2.data and addCart.validate():
         print("cart")
-        cart = IngredientCart(uid=addCart.userID.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
+        cart = IngredientCart(uid=addCart.userID2.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
         cart.insert()
 
         # print(cart)
@@ -116,7 +116,7 @@ def cartIndex():
     
 
 
-    if form.validate_on_submit():
+    if form.submit.data and form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         print(ingredient) 
 

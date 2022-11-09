@@ -7,112 +7,134 @@
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
   <p>
-    {{ form.search(size=32)}}<br/>
-    {% for error in form.search.errors %}<br/>
+    {{ form.search(size=32)}}<br />
+    {% for error in form.search.errors %}<br />
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>
-  {{ form.submit(class_="btn btn-black") }} 
+  {{ form.submit(class_="btn btn-black") }}
   <div id="result"></div>
 
 
-{% if drinks %}
-<h2>Drinks</h2>
+  {% if drinks %}
+  <h2>Drinks</h2>
 
 
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Drink ID</th>
-      <th scope="col">Drink Name</th>
-      <th scope="col">Category</th>
-      <th scope="col">Instruction</th>
+  <table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Drink ID</th>
+        <th scope="col">Drink Name</th>
+        <th scope="col">Category</th>
+        <th scope="col">Instruction</th>
 
-    </tr>
-  </thead>
-  <tbody>
-    {% for drink in drinks %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for drink in drinks %}
       <tr>
         <th scope="row">{{drink.did}}</th>
         <td>{{drink.name}}</td>
         <td>{{drink.category}}</td>
         <td>{{drink.instructions}}</td>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
-
-
-<!-- form to add drink to database -->
-
-<h2>Add Drink</h2>
-<form action="" method="post" novalidate>
-  {{ addDrink.hidden_tag() }}
-  <p>
-    {{ addDrink.drinkName.label }}<br/>
-    {{ addDrink.drinkName(size=32) }}<br/>
-    {% for error in addDrink.drinkName.errors %}<br/>
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ addDrink.drinkCategory.label }}<br/>
-    {{ addDrink.drinkCategory(size=32) }}<br/>
-    {% for error in addDrink.drinkCategory.errors %}<br/>
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ addDrink.drinkInstructions.label }}<br/>
-    {{ addDrink.drinkInstructions(size=32) }}<br/>
-    {% for error in addDrink.drinkInstructions.errors %}<br/>
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ addDrink.drinkImage.label }}<br/>
-    {{ addDrink.drinkImage(size=32) }}<br/>
-    {% for error in addDrink.drinkImage.errors %}<br/>
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  {{ addDrink.submit(class_="btn btn-black") }} 
+      {% endfor %}
 
 
 
-<!-- search by ingredients -->
+    </tbody>
+
+  </table>
+
+  <table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">name</th>
+        <th scope="col">amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ingredient in ingredients %}
+      <tr>
+        <th scope="row">{{ingredient.name}}</th>
+        <td>{{ingredient.amount}}</td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+  {% endif %}
+
+
+  <!-- form to add drink to database -->
+
+  <h2>Add Drink</h2>
+  <form action="" method="post" novalidate>
+    {{ addDrink.hidden_tag() }}
+    <p>
+      {{ addDrink.drinkName.label }}<br />
+      {{ addDrink.drinkName(size=32) }}<br />
+      {% for error in addDrink.drinkName.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ addDrink.drinkCategory.label }}<br />
+      {{ addDrink.drinkCategory(size=32) }}<br />
+      {% for error in addDrink.drinkCategory.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ addDrink.drinkInstructions.label }}<br />
+      {{ addDrink.drinkInstructions(size=32) }}<br />
+      {% for error in addDrink.drinkInstructions.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ addDrink.drinkImage.label }}<br />
+      {{ addDrink.drinkImage(size=32) }}<br />
+      {% for error in addDrink.drinkImage.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    {{ addDrink.submit(class_="btn btn-black") }}
+
+
+
+    <!-- search by ingredients -->
 
 
 
 
-{% block scripts %}
-<script>
-  var search_terms = ['apple', 'apple watch', 'apple macbook', 'apple macbook pro', 'iphone', 'iphone 12'];
+    {% block scripts %}
+    <script>
+      var search_terms = ['apple', 'apple watch', 'apple macbook', 'apple macbook pro', 'iphone', 'iphone 12'];
 
-  function autocompleteMatch(input) {
-    if (input == '') {
-      return [];
-    }
-    var reg = new RegExp(input)
-    return search_terms.filter(function (term) {
-      if (term.match(reg)) {
-        return term;
+      function autocompleteMatch(input) {
+        if (input == '') {
+          return [];
+        }
+        var reg = new RegExp(input)
+        return search_terms.filter(function (term) {
+          if (term.match(reg)) {
+            return term;
+          }
+        });
       }
-    });
-  }
 
-  function showResults(val) {
-    res = document.getElementById("result");
-    res.innerHTML = '';
-    let list = '';
-    let terms = autocompleteMatch(val);
-    for (i = 0; i < terms.length; i++) {
-      list += '<li>' + terms[i] + '</li>';
-    }
-    res.innerHTML = '<ul>' + list + '</ul>';
-  }
-</script>
-{% endblock %}
+      function showResults(val) {
+        res = document.getElementById("result");
+        res.innerHTML = '';
+        let list = '';
+        let terms = autocompleteMatch(val);
+        for (i = 0; i < terms.length; i++) {
+          list += '<li>' + terms[i] + '</li>';
+        }
+        res.innerHTML = '<ul>' + list + '</ul>';
+      }
+    </script>
+    {% endblock %}
 
-{% endblock %}
+    {% endblock %}

@@ -17,6 +17,8 @@ from .models.ratings import Ratings
 from .models.menus import Menus
 from .models.ingredientCart import IngredientCart
 from .models.ingredients import Ingredients
+from .models.cart import Cart
+from .models.components import Components
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -48,6 +50,18 @@ class addCartForm(FlaskForm):
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
+    drinks = []
+    ingredients = []
+
+    if form.validate_on_submit():
+        drinks = Drinks.get_by_name(form.search.data) 
+           
+        print(drinks) 
+        if drinks != []:
+            ingredients = Components.get_by_did(drinks[0].did)
+            print(ingredients)
+
+        
 
         # add drinks to database
     addDrink = addDrinkForm()
@@ -56,12 +70,7 @@ def index():
         drink.insert()
         print(drink)
    
-    drinks = []
-
-    if form.validate_on_submit():
-        drinks = Drinks.get_by_name(form.search.data)    
-        print(drinks) 
-    return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink)
+    return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink, ingredients = ingredients)
 
 
     
@@ -101,7 +110,7 @@ def cartIndex():
         print("cart")
         cart = IngredientCart(uid=addCart.userID.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
         cart.insert()
-        
+
         # print(cart)
 
     

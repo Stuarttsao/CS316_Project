@@ -100,7 +100,7 @@ def menu():
 def cartIndex():
     form = SearchForm()
     ingredient = []
-
+    makable = []
     # delete cart
     deleteCart = deleteCartForm()
     if deleteCart.submit1.data and deleteCart.validate_on_submit():
@@ -129,7 +129,7 @@ def cartIndex():
         makable = IngredientCart.search_by_cart(iidList)
         print(makable)
 
-    return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient)
+    return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient, makable = makable)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():

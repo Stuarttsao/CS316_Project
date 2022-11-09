@@ -11,12 +11,12 @@ class IngredientCart:
     @staticmethod
     def get_by_uid(uid):
         rows = app.db.execute('''
-SELECT uid, iid, amount, unit
-FROM ingredientCart
-WHERE uid = :uid
+SELECT uid, ingredientCart.iid, amount, unit, ingredients.name
+FROM ingredientCart, ingredients
+WHERE uid = :uid AND ingredientCart.iid = ingredients.iid
 ''',
                               uid=uid)
-        return [IngredientCart(*row) for row in rows]
+        return rows
 
 
     @staticmethod

@@ -40,4 +40,19 @@
 </table>
 {% endif %}
 
+
+<h1>Clear User Cart: Enter User ID</h1>
+<form action="" method="post" novalidate>
+  {{ deleteCart.hidden_tag() }}
+  <p>
+    {{ deleteCart.userID.label }}<br/>
+    {{ deleteCart.userID(size=32) }}<br/>
+    {% for error in deleteCart.userID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ deleteCart.submit(class_="btn btn-black") }}
+
+
+
 {% endblock %}

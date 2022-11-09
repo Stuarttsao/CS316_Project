@@ -4,11 +4,82 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/drinks.css') }}">
 
+<form action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.search(size=32)}}<br/>
+    {% for error in form.search.errors %}<br/>
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ form.submit(class_="btn btn-black") }} 
+  <div id="result"></div>
 
-<form autocomplete="off"><input type="text" name="q" id="q" onKeyUp="showResults(this.value)" method="post" novalidate />
-  {{ form.submit(class_="btn btn-black") }}
-  
-<div id="result"></div>
+
+{% if drinks %}
+<h2>Drinks</h2>
+
+
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink ID</th>
+      <th scope="col">Drink Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Instruction</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for drink in drinks %}
+      <tr>
+        <th scope="row">{{drink.did}}</th>
+        <td>{{drink.name}}</td>
+        <td>{{drink.category}}</td>
+        <td>{{drink.instructions}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+
+<!-- form to add drink to database -->
+
+<h2>Add Drink</h2>
+<form action="" method="post" novalidate>
+  {{ addDrink.hidden_tag() }}
+  <p>
+    {{ addDrink.drinkName.label }}<br/>
+    {{ addDrink.drinkName(size=32) }}<br/>
+    {% for error in addDrink.drinkName.errors %}<br/>
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addDrink.drinkCategory.label }}<br/>
+    {{ addDrink.drinkCategory(size=32) }}<br/>
+    {% for error in addDrink.drinkCategory.errors %}<br/>
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addDrink.drinkInstructions.label }}<br/>
+    {{ addDrink.drinkInstructions(size=32) }}<br/>
+    {% for error in addDrink.drinkInstructions.errors %}<br/>
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addDrink.drinkImage.label }}<br/>
+    {{ addDrink.drinkImage(size=32) }}<br/>
+    {% for error in addDrink.drinkImage.errors %}<br/>
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ addDrink.submit(class_="btn btn-black") }} 
+
+
 
 {% block scripts %}
 <script>

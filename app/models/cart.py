@@ -34,3 +34,9 @@ ORDER BY time_added_to_cart DESC
                               uid=uid,
                               since=since)
         return [Cart(*row) for row in rows]
+
+    @staticmethod
+    def remove_all_by_uid(uid):
+        app.db.execute(''' DELETE FROM Cart WHERE uid = :uid ''',
+                          uid=uid)  
+    

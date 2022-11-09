@@ -26,16 +26,38 @@ class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
     submit = SubmitField('Search')
 
+class addDrinkForm(FlaskForm):
+    drinkName = StringField('Drink Name', validators=[DataRequired()])
+    drinkCategory = StringField('Drink Category', validators=[DataRequired()])
+    drinkInstructions = StringField('Drink Instructions', validators=[DataRequired()])
+    drinkImage = StringField('Drink Image', validators=[DataRequired()])
+    submit = SubmitField('Add Drink')
+
+class deleteCartForm(FlaskForm):
+    userID = StringField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Delete Cart')
 
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
-    drink = []
+
+        # add drinks to database
+    addDrink = addDrinkForm()
+    if addDrink.validate_on_submit():
+        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
+        drink.insert()
+        print(drink)
+   
+    drinks = []
+
     if form.validate_on_submit():
-        drink = Drinks.get_by_name(form.search.data)    
-        print(drink) 
-    return render_template('drinks.html', title='Home', form=form, drinks=drink)
+        drinks = Drinks.get_by_name(form.search.data)    
+        print(drinks) 
+    return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink)
+
+
+    
 
     
 @bp.route('/ratings', methods=['GET', 'POST'])
@@ -60,10 +82,17 @@ def menu():
 def cartIndex():
     form = SearchForm()
     ingredient = []
+
+    # delete cart
+    deleteCart = deleteCartForm()
+    if deleteCart.validate_on_submit():
+        IngredientCart.remove_all_by_uid(deleteCart.userID.data)
+        
+
     if form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         print(ingredient) 
-    return render_template('cart.html', title='IngredientCart', form=form, ingredients=ingredient)
+    return render_template('cart.html', title='IngredientCart', form=form, deleteCart = deleteCart,ingredients=ingredient)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():

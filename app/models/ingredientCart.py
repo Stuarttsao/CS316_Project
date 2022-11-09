@@ -21,3 +21,10 @@ WHERE uid = :uid
 ''',
                               uid=uid)
         return [IngredientCart(*row) for row in rows]
+
+
+    @staticmethod
+    def remove_all_by_uid(uid):
+        app.db.execute(''' DELETE FROM ingredientCart WHERE uid = :uid ''',
+                          uid=uid)  
+    

@@ -37,6 +37,13 @@ class deleteCartForm(FlaskForm):
     userID = StringField('User ID', validators=[DataRequired()])
     submit = SubmitField('Delete Cart')
 
+class addCartForm(FlaskForm):
+    userID = StringField('User ID', validators=[DataRequired()])
+    ingredientID = StringField('Ingredient ID', validators=[DataRequired()])
+    amount = StringField('Amount', validators=[DataRequired()])
+    unit = StringField('Unit', validators=[DataRequired()])
+    submit = SubmitField('Add to Cart')
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -87,12 +94,24 @@ def cartIndex():
     deleteCart = deleteCartForm()
     if deleteCart.validate_on_submit():
         IngredientCart.remove_all_by_uid(deleteCart.userID.data)
+    
+    # add to cart
+    addCart = addCartForm()
+    if addCart.validate():
+        print("cart")
+        cart = IngredientCart(uid=addCart.userID.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
+        cart.insert()
         
+        # print(cart)
+
+    
+
 
     if form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         print(ingredient) 
-    return render_template('cart.html', title='IngredientCart', form=form, deleteCart = deleteCart,ingredients=ingredient)
+
+    return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():

@@ -2,10 +2,6 @@ from flask import current_app as app
 
 
 class IngredientCart:
-    """
-    This is just a TEMPLATE for Cart, you should change this by adding or 
-        replacing new columns, etc. for your design.
-    """
     def __init__(self, uid, iid, amount, unit):
         self.uid = uid
         self.iid = iid
@@ -27,4 +23,15 @@ WHERE uid = :uid
     def remove_all_by_uid(uid):
         app.db.execute(''' DELETE FROM ingredientCart WHERE uid = :uid ''',
                           uid=uid)  
+
+    def insert(self):
+        app.db.execute(''' INSERT INTO ingredientCart (uid, iid, amount, unit)
+                            VALUES (:uid, :iid, :amount, :unit) ''',
+                            uid=self.uid,
+                            iid=self.iid,
+                            amount=self.amount,
+                            unit=self.unit)
+
+
+
     

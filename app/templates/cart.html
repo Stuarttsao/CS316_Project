@@ -54,5 +54,39 @@
   {{ deleteCart.submit(class_="btn btn-black") }}
 
 
+<h1>Add Ingredient to UserCart</h1>
+<form action="" method="post" novalidate>
+  {{ addCart.hidden_tag() }}
+  <p>
+    {{ addCart.userID.label }}<br/>
+    {{ addCart.userID(size=32) }}<br/>
+    {% for error in addCart.userID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.ingredientID.label }}<br/>
+    {{ addCart.ingredientID(size=32) }}<br/>
+    {% for error in addCart.ingredientID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.amount.label }}<br/>
+    {{ addCart.amount(size=32) }}<br/>
+    {% for error in addCart.amount.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addCart.unit.label }}<br/>
+    {{ addCart.unit(size=32) }}<br/>
+    {% for error in addCart.unit.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ addCart.submit(class_="btn btn-black") }}
+
+
 
 {% endblock %}

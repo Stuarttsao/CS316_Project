@@ -82,10 +82,10 @@ CREATE TABLE ingredientCart(
     uid Int NOT NULL REFERENCES Users(uid),
     iid Int NOT NULL REFERENCES Ingredients(iid),
     amount FLOAT NOT NULL,
-    unit VARCHAR(255) NOT NULL,
-    --PRIMARY KEY(uid,iid)
-    FOREIGN KEY(uid) REFERENCES Users(uid),
-    FOREIGN KEY(iid) REFERENCES Ingredients(iid)
+    unit VARCHAR(255) NOT NULL
+    -- PRIMARY KEY(uid,iid)
+    -- FOREIGN KEY(uid) REFERENCES Users(uid),
+    -- FOREIGN KEY(iid) REFERENCES Ingredients(iid)
 );
 
 -- CREATE TABLE barCart(

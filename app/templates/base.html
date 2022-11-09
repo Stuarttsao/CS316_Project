@@ -49,17 +49,18 @@
   <div class="sidenav">
     {% block msg %}
       <h1 style="color:aliceblue">Welcome to CompSci 316 Mini-CocktailDB!</h1>
-      <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
-        {% if current_user.is_authenticated %}
-          Hello {{current_user.firstname}}! <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
-        {% else %}
-            <a href="/"> <button class="btn btn-primary btn-lg">Drinks</button> </a>
-            <a href="/ratings"> <button class="btn btn-primary btn-lg">Ratings</button> </a>
-            <a href="/menus"> <button class="btn btn-primary btn-lg">Menus</button> </a>
-            <a href="/recommendations"> <button class="btn btn-primary btn-lg">Recommendations</button> </a>
-            <a href="/cart"> <button class="btn btn-primary btn-lg">Ingredient Cart</button> </a>
+      <div style="color: aliceblue; text-align: right; margin-bottom: 25px; clear: both">
+          <a href="/"> <button class="btn btn-primary btn-lg">Drinks</button> </a>
+          <a href="/ratings"> <button class="btn btn-primary btn-lg">Ratings</button> </a>
+          <a href="/menus"> <button class="btn btn-primary btn-lg">Menus</button> </a>
+          <a href="/recommendations"> <button class="btn btn-primary btn-lg">Recommendations</button> </a>
+          <a href="/cart"> <button class="btn btn-primary btn-lg">Ingredient Cart</button> </a>
+          {% if current_user.is_authenticated %}
+            <h3 style="float:left">Hello {{current_user.firstname}}!</h3> 
+            <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
+          {% else %}
             <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
-        {% endif %}
+          {% endif %}
       </div>
     {% endblock %}
   </div>

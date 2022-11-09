@@ -2,7 +2,6 @@ from flask import render_template
 from flask_login import current_user
 from flask_wtf import FlaskForm
 
-
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 
@@ -20,7 +19,6 @@ from .models.ingredients import Ingredients
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
-
 
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -40,12 +38,18 @@ def index():
     
 @bp.route('/ratings', methods=['GET', 'POST'])
 def social():
+    my_rating = []
+    authenticated = False
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+
     form = SearchForm()
     rating = []
     if form.validate_on_submit():
         rating = Ratings.get_most_recent(form.search.data)    
         print(rating) 
-    return render_template('social.html', title='Rating', form=form, ratings=rating)
+    return render_template('social.html', title='Rating', auth=authenticated, form=form, my_ratings=my_rating, ratings=rating)
 
 @bp.route('/menus', methods=['GET', 'POST'])
 def menu():

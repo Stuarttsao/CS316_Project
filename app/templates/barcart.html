@@ -4,14 +4,15 @@
 
 
 <!-- form to add drink to bar cart -->
+{% if auth %}
 
 <h2>Add Drink to Your Bar Cart</h2>
 <form action="" method="post" novalidate>
 {{ addBarCart.hidden_tag() }}
 <p>
-    {{ addBarCart.drinkID.label }}<br />
-    {{ addBarCart.drinkID(size=32) }}<br />
-    {% for error in addBarCart.drinkID.errors %}<br />
+    {{ addBarCart.drinkName.label }}<br />
+    {{ addBarCart.drinkName(size=32) }}<br />
+    {% for error in addBarCart.drinkName.errors %}<br />
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
 </p>
@@ -24,7 +25,6 @@
 </p>
 {{ addBarCart.submit3(class_="btn btn-black") }}
 
-{% if auth %}
 <h1>Your Drink History</h1>
 {% if my_drinks %}
 <table class='table table-hover table-bordered container'>
@@ -37,8 +37,8 @@
   <tbody>
     {% for drink in my_drinks %}
       <tr>
-        <th scope="row">{{drink.did}}</td>
-        <td>{{drink.times_made}}</td>
+        <th scope="row">{{drink[0]}}</td>
+        <td>{{drink[1]}}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -48,6 +48,11 @@
 <h4> You have not rated any drinks </h4>
 
 {% endif %}
+{% else %}
+<h3> You are not logged in! </h3>
+<h5> Please <strong>Log In</strong> to view your drink history or <strong>Register</strong> to begin your Mini-Cocktail DB Adventure! </h5>
+<a class="btn btn-secondary" href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
+<a class="btn btn-secondary" href="{{ url_for('users.register') }}" role="button">Register</a>
 {% endif %}
 
 {% endblock %}

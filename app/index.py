@@ -48,7 +48,7 @@ class addCartForm(FlaskForm):
     submit2 = SubmitField('Add to Cart')
 
 class addBarForm(FlaskForm):
-    drinkID = StringField('Drink ID', validators=[DataRequired()])
+    drinkName = StringField('Drink Name', validators=[DataRequired()])
     timesMade = StringField('Times Made', validators=[DataRequired()])
     submit3 = SubmitField('Add to Your Bar')
 
@@ -171,10 +171,15 @@ def barCart():
         authenticated = True
         
         if addBarCart.submit3.data and addBarCart.validate():
-            barcart = BarCart(uid=current_uid, did=addBarCart.drinkID.data,times_made=addBarCart.timesMade.data)
+            submit_drink = Drinks.get_by_name(addBarCart.drinkName.data)
+            barcart = BarCart(uid=current_uid, did=submit_drink[0].did,times_made=addBarCart.timesMade.data)
             barcart.insert()
             
-        my_drinks = BarCart.get_drinks_in_cart(current_uid)
+        my_drinks_barcart = BarCart.get_drinks_in_cart(current_uid)
+        for barcart in my_drinks_barcart:
+            drinkName = Drinks.get_by_did(barcart.did).name
+            my_drinks.append([drinkName, barcart.times_made])
+        print(my_drinks)
     return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])

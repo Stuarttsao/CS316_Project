@@ -34,9 +34,9 @@
     {% for rating in ratings %}
       <tr>
         <th scope="row">{{rating.did}}</td>
-        <td>{{rating.date}}</td>
+        <td>{{rating.time_rated}}</td>
         <td>{{rating.score}}</td>
-        <td>{{rating.description}}</td>
+        <td>{{rating.descript}}</td>
         <td>{{rating.likes}}</td>
         <td>{{rating.dislikes}}</td>
       </tr>
@@ -45,38 +45,132 @@
 </table>
 {% endif %}
 
-{% if auth %}
-<h1>Your Recent Ratings</h1>
-{% if my_ratings %}
+
+<h1>Clear Ratings: Enter User ID</h1>
+<form action="" method="post" novalidate>
+  {{ deleteReviewUid.hidden_tag() }}
+  <p>
+    {{ deleteReviewUid.userID.label }}<br/>
+    {{ deleteReviewUid.userID(size=32) }}<br/>
+    {% for error in deleteReviewUid.userID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ deleteReviewUid.submit2(class_="btn btn-black") }}
+
+<h1>Clear Ratings: Enter Drink ID</h1>
+<form action="" method="post" novalidate>
+  {{ deleteReviewDid.hidden_tag() }}
+  <p>
+    {{ deleteReviewDid.drinkID.label }}<br/>
+    {{ deleteReviewDid.drinkID(size=32) }}<br/>
+    {% for error in deleteReviewDid.drinkID.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ deleteReviewDid.submit3(class_="btn btn-black") }}
+
+<h1>Clear Ratings: Enter User ID and Drink ID</h1>
+<form action="" method="post" novalidate>
+  {{ deleteReviewUidDid.hidden_tag() }}
+  <p>
+    {{ deleteReviewUidDid.userID2.label }}<br/>
+    {{ deleteReviewUidDid.userID2(size=32) }}<br/>
+    {% for error in deleteReviewUidDid.userID2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ deleteReviewUidDid.drinkID2.label }}<br/>
+    {{ deleteReviewUidDid.drinkID2(size=32) }}<br/>
+    {% for error in deleteReviewUidDid.drinkID2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ deleteReviewUidDid.submit4(class_="btn btn-black") }}
+
+<h1>Add Review to Reviews</h1>
+<form action="" method="post" novalidate>
+  {{ addReview.hidden_tag() }}
+  <p>
+    {{ addReview.userID3.label }}<br/>
+    {{ addReview.userID3(size=32) }}<br/>
+    {% for error in addReview.userID3.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.drinkID3.label }}<br/>
+    {{ addReview.drinkID3(size=32) }}<br/>
+    {% for error in addReview.drinkID3.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.time_rated.label }}<br/>
+    {{ addReview.time_rated(size=32) }}<br/>
+    {% for error in addReview.time_rated.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.score.label }}<br/>
+    {{ addReview.score(size=32) }}<br/>
+    {% for error in addReview.score.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.descript.label }}<br/>
+    {{ addReview.descript(size=32) }}<br/>
+    {% for error in addReview.descript.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.likes.label }}<br/>
+    {{ addReview.likes(size=32) }}<br/>
+    {% for error in addReview.likes.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ addReview.dislikes.label }}<br/>
+    {{ addReview.dislikes(size=32) }}<br/>
+    {% for error in addReview.dislikes.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ addReview.submit5(class_="btn btn-black") }}
+
+<h1>Get Average Rating: Enter Drink ID</h1>
+<form action="" method="post" novalidate>
+  {{ getAvgRating.hidden_tag() }}
+  <p>
+    {{ getAvgRating.drinkID4.label }}<br/>
+    {{ getAvgRating.drinkID4(size=32) }}<br/>
+    {% for error in getAvgRating.drinkID4.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ getAvgRating.submit6(class_="btn btn-black") }}
+
+<!-- avg rating returned from search -->
+
+{% if avgs %}
+<h2>Ratings</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Drink ID</th>
-      <th scope="col">Rating Date</th>
-      <th scope="col">Score</th>
-      <th scope="col">Review</th>
-      <th scope="col">Likes</th>
-      <th scope="col">Dislikes</th>
+      <th scope="col">Average Rating</th>
     </tr>
   </thead>
   <tbody>
-    {% for my_rating in my_ratings %}
-      <tr>
-        <th scope="row">{{my_rating.did}}</td>
-        <td>{{my_rating.date}}</td>
-        <td>{{my_rating.score}}</td>
-        <td>{{my_rating.description}}</td>
-        <td>{{my_rating.likes}}</td>
-        <td>{{my_rating.dislikes}}</td>
-      </tr>
-    {% endfor %}
+    <tr>
+      <th scope="row">{{avgs}}</td>
+    </tr>
   </tbody>
 </table>
-{% else %}
-
-<h4> You have not rated any drinks </h4>
-
-{% endif %}
 {% endif %}
 
 {% endblock %}

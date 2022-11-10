@@ -45,4 +45,38 @@
 </table>
 {% endif %}
 
+{% if auth %}
+<h1>Your Recent Ratings</h1>
+{% if my_ratings %}
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink ID</th>
+      <th scope="col">Rating Date</th>
+      <th scope="col">Score</th>
+      <th scope="col">Review</th>
+      <th scope="col">Likes</th>
+      <th scope="col">Dislikes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for my_rating in my_ratings %}
+      <tr>
+        <th scope="row">{{my_rating.did}}</td>
+        <td>{{my_rating.date}}</td>
+        <td>{{my_rating.score}}</td>
+        <td>{{my_rating.description}}</td>
+        <td>{{my_rating.likes}}</td>
+        <td>{{my_rating.dislikes}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+
+<h4> You have not rated any drinks </h4>
+
+{% endif %}
+{% endif %}
+
 {% endblock %}

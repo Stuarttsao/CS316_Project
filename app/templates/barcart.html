@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<!-- form to add drink to bar cart -->
+
+<h2>Add Drink to Your Bar Cart</h2>
+<form action="" method="post" novalidate>
+{{ addBarCart.hidden_tag() }}
+<p>
+    {{ addBarCart.drinkID.label }}<br />
+    {{ addBarCart.drinkID(size=32) }}<br />
+    {% for error in addBarCart.drinkID.errors %}<br />
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ addBarCart.timesMade.label }}<br />
+    {{ addBarCart.timesMade(size=32) }}<br />
+    {% for error in addBarCart.timesMade.errors %}<br />
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+{{ addBarCart.submit3(class_="btn btn-black") }}
+
+{% if auth %}
+<h1>Your Drink History</h1>
+{% if my_drinks %}
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink ID</th>
+      <th scope="col">Times Made</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for drink in my_drinks %}
+      <tr>
+        <th scope="row">{{drink.did}}</td>
+        <td>{{drink.times_made}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+
+<h4> You have not rated any drinks </h4>
+
+{% endif %}
+{% endif %}
+
+{% endblock %}

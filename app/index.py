@@ -52,6 +52,11 @@ class addBarForm(FlaskForm):
     timesMade = StringField('Times Made', validators=[DataRequired()])
     submit3 = SubmitField('Add to Your Bar')
 
+class addMenuForm(FlaskForm):
+    menuName = StringField('Menu Name', validators=[DataRequired()])
+    menuSummary = StringField('Menu Summary', validators=[DataRequired()])
+    submit4 = SubmitField('Add New Menu')
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -102,10 +107,25 @@ def social():
 def menu():
     form = SearchForm()
     menu = []
+    addMenu = addMenuForm()
+    my_menus = []
+    authenticated = False
+
     if form.validate_on_submit():
         menu = Menus.get_most_recent(form.search.data)    
-        print(menu) 
-    return render_template('menu.html', title='Menu', form=form, menus=menu)
+        print(menu)
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+        
+        if addMenu.submit4.data and addMenu.validate():
+            now = datetime.datetime.now()
+            usermenu = Menus(uid=current_uid, name=addMenu.menuName.data, time_made=now.strftime("%m-%d-%Y %H:%M:%S"),summary=addMenu.menuSummary.data)
+            usermenu.insert()
+            
+        my_menus = Menus.get_most_recent(current_uid)
+        print(my_menus) 
+    return render_template('menu.html', title='Menu', form=form, menus=menu, my_menus=my_menus, addMenu=addMenu, auth=authenticated)
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():
@@ -144,19 +164,17 @@ def barCart():
 
     my_drinks=[]
     authenticated = False
+    addBarCart = addBarForm()
+
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
-
-    addBarCart = addBarForm()
-    
-    if addBarCart.submit3.data and addBarCart.validate():
-        barcart = BarCart(uid=current_uid, did=addBarCart.drinkID.data,times_made=addBarCart.timesMade.data)
-        barcart.insert()
         
-    if current_user.is_authenticated:
+        if addBarCart.submit3.data and addBarCart.validate():
+            barcart = BarCart(uid=current_uid, did=addBarCart.drinkID.data,times_made=addBarCart.timesMade.data)
+            barcart.insert()
+            
         my_drinks = BarCart.get_drinks_in_cart(current_uid)
-
     return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
@@ -166,5 +184,4 @@ def recommend():
     if form.validate_on_submit():
         drink = Ingredients.get_by_ingredient(form.search.data) 
         print(drink)
-    return render_template('recommendations.html', title='Recommendations', form=form, drinks=drink)
 

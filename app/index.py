@@ -17,7 +17,8 @@ from .models.ratings import Ratings
 from .models.menus import Menus
 from .models.ingredientCart import IngredientCart
 from .models.ingredients import Ingredients
-from .models.cart import Cart
+#from .models.cart import Cart
+from .models.barcart import BarCart
 from .models.components import Components
 
 from flask import Blueprint
@@ -46,7 +47,10 @@ class addCartForm(FlaskForm):
     unit = StringField('Unit', validators=[DataRequired()])
     submit2 = SubmitField('Add to Cart')
 
-
+class addBarForm(FlaskForm):
+    drinkID = StringField('Drink ID', validators=[DataRequired()])
+    timesMade = StringField('Times Made', validators=[DataRequired()])
+    submit3 = SubmitField('Add to Your Bar')
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -85,6 +89,7 @@ def social():
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
+        my_rating = Ratings.get_most_recent(current_uid)    
 
     form = SearchForm()
     rating = []
@@ -121,9 +126,6 @@ def cartIndex():
 
         # print(cart)
 
-    
-
-
     if form.submit.data and form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         
@@ -136,6 +138,26 @@ def cartIndex():
         print(makable)
 
     return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient, makable = makable)
+
+@bp.route('/barcart', methods=['GET', 'POST'])
+def barCart():
+
+    my_drinks=[]
+    authenticated = False
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+
+    addBarCart = addBarForm()
+    
+    if addBarCart.submit3.data and addBarCart.validate():
+        barcart = BarCart(uid=current_uid, did=addBarCart.drinkID.data,times_made=addBarCart.timesMade.data)
+        barcart.insert()
+        
+    if current_user.is_authenticated:
+        my_drinks = BarCart.get_drinks_in_cart(current_uid)
+
+    return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():

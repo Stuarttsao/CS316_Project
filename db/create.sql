@@ -88,8 +88,8 @@ CREATE TABLE ingredientCart(
     -- FOREIGN KEY(iid) REFERENCES Ingredients(iid)
 );
 
--- CREATE TABLE barCart(
---     FOREIGN KEY(uid) REFERENCES Users(uid),
---     FOREIGN KEY(iid) REFERENCES Ingredients(did),
---     times_made INT NOT NULL
--- ):
+CREATE TABLE barCart(
+    uid Int NOT NULL REFERENCES Users(uid),
+    did Int NOT NULL REFERENCES Drinks(did),
+    times_made INT NOT NULL
+);

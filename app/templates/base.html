@@ -55,6 +55,7 @@
         <a href="/menus"> <button class="btn btn-primary btn-lg">Menus</button> </a>
         <a href="/recommendations"> <button class="btn btn-primary btn-lg">Recommendations</button> </a>
         <a href="/cart"> <button class="btn btn-primary btn-lg">Ingredient Cart</button> </a>
+        <a href="/barcart"> <button class="btn btn-primary btn-lg">Bar Cart</button> </a>
         {% if current_user.is_authenticated %}
           <h3 style="float:left">Hello {{current_user.firstname}}!</h3> 
           <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>

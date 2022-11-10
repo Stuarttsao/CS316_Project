@@ -37,7 +37,7 @@ LIMIT 5
 ''',
                               uid=uid)
         print("rows:",rows) #remember to enforce uniqueness
-        return [Ratings(*row) for row in rows]
+        return [Ratings(*row) for row in rows] if rows else None
 
 #     @staticmethod
 #     def get_all_by_uid_since(uid, since):

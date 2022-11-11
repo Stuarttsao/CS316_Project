@@ -1,3 +1,29 @@
+# Mini-Cocktail DB
+In hopes of increasing access to cocktail making, we are creating a platform that provides advanced cocktail recipe search, sharing, and saving. On our website, users can search available cocktails based on ingredients they have, drink category, and alcoholic content. Users can also share personal recipes and review others’ recipes. In a Pinterest-esque format, users can save cocktails to curated lists based on their liking (e.g. Summer drinks, classy drinks, for this weekend, etc). 
+
+## Updates since Milestone 2
+
+### Bryan
+- Updated functionality for menus being added
+- And helped with user login and authentication function
+
+### Stuart
+- Updated functionality of ingredients/bar cart
+- Updated functionality of drinks page
+- Created individual drink display page/template
+
+### Cheryl
+- Implemented front end UI, standardized design across website
+- Updated how ingredients are linked to drinks 
+
+### Ashir
+- Update functionality of reviews (add rating, clear reviews, and get average ratings)
+
+### Jaimie
+- Implemented user registration, login, authentication and use of current user information throughout database
+- Implemented bar cart so users can add drinks to cart.
+
+## Original Project Info
 Skeleton code for the CompSci 316 undergraduate course project.
 This course project is intended as a 'standard option'.
 

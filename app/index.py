@@ -180,10 +180,11 @@ def barCart():
             barcart.insert()
             
         my_drinks_barcart = BarCart.get_drinks_in_cart(current_uid)
-        for barcart in my_drinks_barcart:
-            drinkName = Drinks.get_by_did(barcart.did).name
-            my_drinks.append([drinkName, barcart.times_made])
-        print(my_drinks)
+        if my_drinks_barcart:
+            for barcart in my_drinks_barcart:
+                drinkName = Drinks.get_by_did(barcart.did).name
+                my_drinks.append([drinkName, barcart.times_made])
+            print(my_drinks)
     return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])

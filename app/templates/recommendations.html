@@ -27,10 +27,26 @@
   </thead>
   <tbody>
     {% for drink in drinks %}
-      <tr>
-        <td>{{drink.name}}</td>
-        
-      </tr>
+    <tr>
+      <td>
+      <details>
+        <summary>{{drink.name}}</summary>
+        <div class="content">
+
+          <p>
+            <b>Category: </b> {{drink.category}}
+          </p>
+          <p>
+            <b>Instructions: </b> {{drink.instructions}}
+          </p>
+        <br>
+          <img class = "drink-picture" src = {{drink.picture}}>
+        </div>
+      </details>
+    </td>
+    </tr>
+     
+      
     {% endfor %}
   </tbody>
 </table>

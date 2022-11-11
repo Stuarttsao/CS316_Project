@@ -3,7 +3,10 @@
 {% block content %}
 
 <!-- HTML Page with search bar and search button -->
-<h1>Ingredients Cart Search: Enter User ID</h1>
+
+<!-- <h1>Current user: {{uid}}</h1> -->
+
+<h1>What do you have in your fridge?</h1>
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
   <p>
@@ -16,32 +19,42 @@
   {{ form.submit(class_="btn btn-black") }}
 
   <!-- list of ingredients returned from search -->
+  {% if ingredients %}
+  <div>
+      {% for ingredient in ingredients %}
+        <span class="b">
+          <text class="text">{{ingredient.name}}</text>
+        </span>
+        <form method="POST" action="/cart">
+          <input type="submit" value="add to cart" name="add">
+          <input type="hidden" value="{{ingredient.iid}}" name="ingredient">
+        </form>
+      {% endfor %}
+  </div>
+  {% endif %}
 
-{% if ingredients %}
-<h2>Ingredients Cart</h2>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Ingredients</th>
-      <th scope="col">Amount</th>
-      <th scope="col">Units</th>
+{% if localCart %}
+<h1>My Ingredients Cart</h1>
+<div>
+  {% for ingredient in localCart %}
+    <span class="b">
+      <text class="text">{{ingredient.name}}</text>
+    </span>
+  {% endfor %}
+</div>
 
-    </tr>
-  </thead>
-  <tbody>
-    {% for ingredient in ingredients %}
-      <tr>
-        <th scope="row">{{ingredient.name}}</th>
-        <td>{{ingredient.amount}}</td>
-        <td>{{ingredient.unit}}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<form method="POST" action="/cart">
+  <input type="submit" value="Clear Cart" name="clearCart">
+</form>
 
-
+<h1 >What cocktails can I make?</h1>
+<form method="POST" action="/cart">
+  <input type="submit" value="Search" name="makable">
+</form>
 
 {% endif %}
+
+
 
 {% if makable %}
 <h2>Drinks you can make with these ingredients:</h2>
@@ -54,7 +67,7 @@
   <tbody>
     {% for drink in makable %}
       <tr>
-        <th scope="row">{{drink.name}}</th>
+        <th scope="row"><a href="{{ url_for('index.drink', did = drink.did) }}">{{drink.name}}</a></th>
       </tr>
     {% endfor %}
   </tbody>
@@ -63,20 +76,20 @@
 {% endif %}
 
 
-<h1>Clear User Cart: Enter User ID</h1>
-<form action="" method="post" novalidate>
-  {{ deleteCart.hidden_tag() }}
-  <p>
+<!-- <h1>Clear User Cart: Enter User ID</h1> -->
+
+  <!-- {{ deleteCart.hidden_tag() }} -->
+  <!-- <p>
     {{ deleteCart.userID1.label }}<br/>
     {{ deleteCart.userID1(size=32) }}<br/>
     {% for error in deleteCart.userID1.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
-  </p>
-  {{ deleteCart.submit1(class_="btn btn-black") }}
+  </p> -->
+  <!-- {{ deleteCart.submit1(class_="btn btn-black") }} -->
 
 
-<h1>Add Ingredient to UserCart</h1>
+<!-- <h1>Add Ingredient to UserCart</h1>
 <form action="" method="post" novalidate>
   {{ addCart.hidden_tag() }}
   <p>
@@ -107,7 +120,7 @@
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>
-  {{ addCart.submit2(class_="btn btn-black") }}
+  {{ addCart.submit2(class_="btn btn-black") }} -->
 
 
 

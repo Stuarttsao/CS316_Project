@@ -1,5 +1,5 @@
-from urllib import request
-from flask import render_template
+# from urllib import request
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import current_user
 from flask_wtf import FlaskForm
 
@@ -39,7 +39,7 @@ class addDrinkForm(FlaskForm):
 
 class deleteCartForm(FlaskForm):
     userID1 = StringField('User ID', validators=[DataRequired()])
-    submit1 = SubmitField('Delete Cart')
+    submit1 = SubmitField('Clear Cart')
 
 class addCartForm(FlaskForm):
     userID2 = StringField('User ID', validators=[DataRequired()])
@@ -90,7 +90,12 @@ def drink(did):
     drink = Drinks.get_by_did(did)
     ingredients = Components.get_by_did(did)
     return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients)
-    
+
+# @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
+# def addToCart(iid):
+#     ingredient = Ingredients.get_by_iid(iid)
+
+
 @bp.route('/ratings', methods=['GET', 'POST'])
 def social():
     my_rating = []
@@ -134,34 +139,58 @@ def menu():
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():
     form = SearchForm()
-    ingredient = []
+    ingredients = []
     makable = []
+    addIngredient = []
     # delete cart
+    localCart = IngredientCart.get_by_uid(current_user.uid)
+
     deleteCart = deleteCartForm()
-    if deleteCart.submit1.data and deleteCart.validate_on_submit():
-        IngredientCart.remove_all_by_uid(deleteCart.userID1.data)
-    
-    # add to cart
     addCart = addCartForm()
-    if addCart.submit2.data and addCart.validate():
-        print("cart")
-        cart = IngredientCart(uid=addCart.userID2.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
-        cart.insert()
 
-        # print(cart)
+    if request.method == 'POST':
 
-    if form.submit.data and form.validate_on_submit():
-        ingredient = IngredientCart.get_by_uid(form.search.data)    
-        
-        iidList = []
-        for i in ingredient:
-            iidList.append(i.iid)
-        print(iidList)
+        if request.form.get('clearCart') == 'Clear Cart':
+            IngredientCart.remove_all_by_uid(current_user.uid)
+            localCart = IngredientCart.get_by_uid(current_user.uid)
+            print(localCart)
+            print("deleted cart")
 
-        makable = IngredientCart.search_by_cart(iidList)
-        print(makable)
+        # # add to cart
+        # if addCart.submit2.data and addCart.validate():
+        #     print("cart")
+        #     cart = IngredientCart(uid=addCart.userID2.data, iid=addCart.ingredientID.data, amount=addCart.amount.data, unit=addCart.unit.data)
+        #     cart.insert()
+        #     localCart = IngredientCart.get_by_uid(current_user.uid)
 
-    return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient, makable = makable)
+        if form.submit.data and form.validate_on_submit():        
+            ingredients = Ingredients.get_by_name(form.search.data)
+            print(ingredients)
+            
+
+        if request.form.get('add'):
+            cart = IngredientCart(uid=current_user.uid, iid=request.form.get('ingredient'), amount=100, unit="placeholder")
+            cart.insert()
+            localCart = IngredientCart.get_by_uid(current_user.uid)
+
+
+
+
+
+
+        if request.form.get('makable') == 'Search':       
+            iidList = []
+            for i in localCart:
+                iidList.append(i.iid)
+            print(iidList)
+
+            makable = IngredientCart.search_by_cart(iidList)
+            print(makable)
+
+    return render_template('cart.html', title='IngredientCart',uid = current_user.uid, 
+    form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredients, localCart = localCart, makable = makable)
+
+
 
 @bp.route('/barcart', methods=['GET', 'POST'])
 def barCart():

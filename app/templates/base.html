@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/example.css') }}">
   <style>
     body {
-        font-family: "Lato", sans-serif;
+        font-family: "Roboto", sans-serif;
     }
 
     .main-head {
@@ -17,15 +17,9 @@
         background: #FFF;
     }
 
-    .sidenav {
-        height: 100%;
-        background-color: #000;
-        overflow-x: hidden;
-        padding-top: 20px;
-    }
-
+   
     .main {
-        padding: 0px 10px;
+        padding: 10rem;
     }
 
     .login-main-text {
@@ -42,11 +36,39 @@
         background-color: #000 !important;
         color: #fff;
     }
+    
   </style>
 </head>
 
 <body>
-  <div class="sidenav">
+
+    <input type="checkbox" id="ham-menu">
+    <label for="ham-menu">
+      <div class="hide-des">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+      </div>
+
+    </label>
+    <div class="full-page-menu"></div>
+    <div class="ham-menu">
+      <ul class="centre-text bold-text">
+        <li><a class="sidenav-item" href="/"> Drinks </a></li>
+        <li><a class="sidenav-item" href="/ratings"> Ratings </a></li>
+        <li><a class="sidenav-item" href="/menus"> Menus </a></li>
+        <li><a class="sidenav-item" href="/recommendations"> Recommendations </a></li>
+        <li><a class="sidenav-item" href="/cart"> Ingredient Cart </a></li>
+        <li><a class="sidenav-item" href="{{ url_for('users.login') }}"> Log In </a></li>
+      </ul>
+    </div>
+
+
+
+  <!-- <div class="sidenav">
     {% block msg %}
       <h1 style="color:aliceblue">Welcome to CompSci 316 Mini-CocktailDB!</h1>
       <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
@@ -62,7 +84,7 @@
         {% endif %}
       </div>
     {% endblock %}
-  </div>
+  </div> -->
   <div class="main">
     {% block content %}{% endblock %}
   </div>

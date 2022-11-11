@@ -1,23 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>{{ drink.name }}</h1>
-    <p>{{ drink.category }}</p>
+    <p><b>Category: </b>{{ drink.category }}</p>
 
-    <img src="{{ drink.picture }}" alt="{{ drink.name }}">
+    <img class="drink-picture" src="{{ drink.picture }}" alt="{{ drink.name }}">
     
-    <p>Ingredients:</p>
+    <p><b>Ingredients:</b></p>
     <ul>
         {% for ingredient in ingredients %}
             <li>{{ ingredient.name }}</li>
         {% endfor %}
     </ul>
-    <p>Instructions:</p>
+    <p><b>Instructions:</b></p>
     <p>{{ drink.instructions }}</p>
-
-
-
-
-
 
 {% endblock %}
 

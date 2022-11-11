@@ -1,20 +1,30 @@
 from flask import current_app as app
 
 class Ingredients:
-    def __init__(self, name, category, instructions, picture):
-        # drink characteristics
+    def __init__(self, iid, name):
+        self.iid = iid
         self.name = name
-        self.category = category
-        self.instructions = instructions
-        self.picture = picture
 
     @staticmethod
-    # search drinks by ingredients list
-    def get_by_ingredient(name):
+    def get_by_iid(iid):
         rows = app.db.execute('''
-            SELECT DISTINCT d.name, d.category, d.instructions, d.picture
-            FROM Components c, Drinks d, Ingredients i
-            WHERE i.name = :name and c.iid = i.iid and d.did = c.did
-            ''',
-                              name=name)
+SELECT iid, name
+FROM Ingredients
+WHERE iid = :iid
+''',
+
+                                iid=iid)
+        return Ingredients(*(rows[0])) if rows else None
+
+    @staticmethod
+    def get_by_name(name):
+        rows = app.db.execute('''
+SELECT iid, name
+FROM Ingredients
+WHERE name = :name
+''',
+                                name=name)
         return [Ingredients(*row) for row in rows]
+
+
+        

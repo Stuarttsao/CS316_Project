@@ -62,7 +62,7 @@ WHERE uid = :uid AND ingredientCart.iid = ingredients.iid
             FROM temp
             GROUP BY did
         )
-        SELECT drinks.name
+        SELECT drinks.name, drinks.did
         FROM drinks, total2, total
         WHERE total2.did = total.did AND total2.count = total.count AND total2.did = drinks.did
         ''')

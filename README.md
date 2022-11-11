@@ -1,6 +1,10 @@
 # Mini-Cocktail DB
 In hopes of increasing access to cocktail making, we are creating a platform that provides advanced cocktail recipe search, sharing, and saving. On our website, users can search available cocktails based on ingredients they have, drink category, and alcoholic content. Users can also share personal recipes and review others’ recipes. In a Pinterest-esque format, users can save cocktails to curated lists based on their liking (e.g. Summer drinks, classy drinks, for this weekend, etc). 
 
+## Milestone 3 recording:
+https://drive.google.com/file/d/1RHgNgV6DWB5rsE-Zx9ld6HBAmttCSxcT/view?usp=sharing
+
+
 ## Updates since Milestone 2
 
 ### Bryan

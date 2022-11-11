@@ -34,7 +34,7 @@
       {% for drink in drinks %}
       <tr>
         <th scope="row">{{drink.did}}</th>
-        <td>{{drink.name}}</td>
+        <td ><a href="{{ url_for('index.drink', did = drink.did) }}">{{drink.name}}</a></td>
         <td>{{drink.category}}</td>
         <td>{{drink.instructions}}</td>
       </tr>
@@ -97,7 +97,7 @@
       {{ addDrink.drinkImage(size=32) }}<br />
       {% for error in addDrink.drinkImage.errors %}<br />
       <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
+      {% endfor %} 
     </p>
     {{ addDrink.submit1(class_="btn btn-black") }}
 

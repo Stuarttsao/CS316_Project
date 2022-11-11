@@ -3,7 +3,7 @@ FLASK_ENV=development
 FLASK_RUN_HOST=0.0.0.0
 FLASK_RUN_PORT=5000
 
-SECRET_KEY='jwr9rvzbleg3ejwplur9sgiapgd217ajbicpmhq-epjxxfiq9m'
+SECRET_KEY='ro6ws-675z8ck07gvitt3b3ajr_xjx4wbcr95tn7rbtyb-g1yu'
 
 DB_NAME=amazon
 DB_USER=vcm

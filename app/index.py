@@ -1,3 +1,4 @@
+from urllib import request
 from flask import render_template
 from flask_login import current_user
 from flask_wtf import FlaskForm
@@ -84,8 +85,11 @@ def index():
     return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink, ingredients = ingredients)
 
 
-    
-
+@bp.route('/drink/<did>', methods=['GET', 'POST'])
+def drink(did):
+    drink = Drinks.get_by_did(did)
+    ingredients = Components.get_by_did(did)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients)
     
 @bp.route('/ratings', methods=['GET', 'POST'])
 def social():

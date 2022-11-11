@@ -10,9 +10,9 @@ class Ratings:
         #self.id = id
         self.uid = uid
         self.did = did
-        self.date = time_rated
+        self.time_rated = time_rated
         self.score = score
-        self.description = descript
+        self.descript = descript
         self.likes = likes
         self.dislikes = dislikes
 
@@ -37,7 +37,32 @@ LIMIT 5
 ''',
                               uid=uid)
         print("rows:",rows) #remember to enforce uniqueness
-        return [Ratings(*row) for row in rows] if rows else None
+        return [Ratings(*row) for row in rows]
+
+    @staticmethod
+    def get_by_drink(did):
+        rows = app.db.execute('''
+SELECT uid, did, time_rated, score, descript, likes, dislikes
+FROM Ratings
+WHERE did = :did
+ORDER BY time_rated DESC
+LIMIT 5
+''',
+                              did=did)
+        print("rows:",rows) #remember to enforce uniqueness
+        return [Ratings(*row) for row in rows]
+
+    @staticmethod
+    def get_avg_rating(did):
+        avg_score = app.db.execute('''
+SELECT round(avg(score), 1)
+FROM Ratings
+WHERE did = :did
+LIMIT 5
+''',
+                              did=did)
+        print("avg_score:", avg_score) #remember to enforce uniqueness
+        return avg_score
 
 #     @staticmethod
 #     def get_all_by_uid_since(uid, since):
@@ -51,3 +76,30 @@ LIMIT 5
 #                               uid=uid,
 #                               since=since)
 #         return [Review(*row) for row in rows]
+
+    @staticmethod
+    def remove_all_by_uid(uid):
+        app.db.execute(''' DELETE FROM Ratings WHERE uid = :uid ''',
+                        uid=uid)  
+
+    @staticmethod
+    def remove_all_by_did(did):
+        app.db.execute(''' DELETE FROM Ratings WHERE did = :did ''',
+                        did=did)  
+
+    @staticmethod
+    def remove_all_by_uid_did(uid, did):
+        app.db.execute(''' DELETE FROM Ratings WHERE uid = :uid AND did = :did ''',
+                        uid = uid,
+                        did = did)  
+
+    def insert(self):
+        app.db.execute(''' INSERT INTO Ratings (uid, did, time_rated, score, descript, likes, dislikes)
+                            VALUES (:uid, :did, :time_rated, :score, :descript, :likes, :dislikes) ''',
+                            uid=self.uid,
+                            did=self.did,
+                            time_rated=self.time_rated,
+                            score=self.score,
+                            descript=self.descript,
+                            likes=self.likes,
+                            dislikes=self.dislikes)

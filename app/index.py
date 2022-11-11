@@ -58,6 +58,33 @@ class addMenuForm(FlaskForm):
     menuSummary = StringField('Menu Summary', validators=[DataRequired()])
     submit4 = SubmitField('Add New Menu')
 
+class deleteReviewUidForm(FlaskForm):
+    userID = StringField('User ID', validators=[DataRequired()])
+    submit2 = SubmitField('Delete Cart')
+
+class deleteReviewDidForm(FlaskForm):
+    drinkID = StringField('Drink ID', validators=[DataRequired()])
+    submit3 = SubmitField('Delete Cart')
+
+class deleteReviewUidDidForm(FlaskForm):
+    userID2 = StringField('User ID', validators=[DataRequired()])
+    drinkID2 = StringField('Drink ID', validators=[DataRequired()])
+    submit4 = SubmitField('Delete Cart')
+
+class addReviewForm(FlaskForm):
+    userID3 = StringField('User ID', validators=[DataRequired()])
+    drinkID3 = StringField('Drink ID', validators=[DataRequired()])
+    time_rated = StringField('Time Rated', validators=[DataRequired()])
+    score = StringField('Score', validators=[DataRequired()])
+    descript = StringField('Description', validators=[DataRequired()])
+    likes = StringField('Likes', validators=[DataRequired()])
+    dislikes = StringField('Dislikes', validators=[DataRequired()])
+    submit5 = SubmitField('Add to Cart')
+
+class getAvgRatingForm(FlaskForm):
+    drinkID4 = StringField('Drink ID', validators=[DataRequired()])
+    submit6 = SubmitField('Search')
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -98,20 +125,44 @@ def drink(did):
 
 @bp.route('/ratings', methods=['GET', 'POST'])
 def social():
-    my_rating = []
-    authenticated = False
-    if current_user.is_authenticated:
-        current_uid = current_user.uid
-        authenticated = True
-        my_rating = Ratings.get_most_recent(current_uid)    
-
     form = SearchForm()
     rating = []
+
+    # delete by uid
+    deleteReviewUid = deleteReviewUidForm()
+    if deleteReviewUid.validate_on_submit():
+        Ratings.remove_all_by_uid(deleteReviewUid.userID.data)
+
+    # delete by did
+    deleteReviewDid = deleteReviewDidForm()
+    if deleteReviewDid.validate_on_submit():
+        Ratings.remove_all_by_did(deleteReviewDid.drinkID.data)
+
+    # delete by uid/did combo
+    deleteReviewUidDid = deleteReviewUidDidForm()
+    if deleteReviewUidDid.validate_on_submit():
+        Ratings.remove_all_by_uid_did(deleteReviewUidDid.userID2.data, deleteReviewUidDid.drinkID2.data)
+    
+    # add to reviews
+    addReview = addReviewForm()
+    if addReview.validate():
+        print("cart")
+        cart = Ratings(uid=addReview.userID3.data, did=addReview.drinkID3.data, time_rated=addReview.time_rated.data, score=addReview.score.data, descript=addReview.descript.data, likes=addReview.likes.data, dislikes=addReview.dislikes.data)
+        cart.insert()
+
+    # find average rating of a drink
+    getAvgRating = getAvgRatingForm()
+    avg = 0
+    if getAvgRating.validate_on_submit():
+        avg = Ratings.get_avg_rating(getAvgRating.drinkID4.data)
+        print(avg)
+
+
     if form.validate_on_submit():
         rating = Ratings.get_most_recent(form.search.data)    
         print(rating) 
-    return render_template('social.html', title='Rating', auth=authenticated, form=form, my_ratings=my_rating, ratings=rating)
-    
+    return render_template('social.html', title='Rating', form=form, deleteReviewUid = deleteReviewUid, deleteReviewDid = deleteReviewDid, deleteReviewUidDid = deleteReviewUidDid, addReview = addReview, getAvgRating = getAvgRating, ratings=rating, avgs=avg)
+
 @bp.route('/menus', methods=['GET', 'POST'])
 def menu():
     form = SearchForm()

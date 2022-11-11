@@ -1,3 +1,4 @@
+from urllib import request
 from flask import render_template
 from flask_login import current_user
 from flask_wtf import FlaskForm
@@ -17,7 +18,8 @@ from .models.ratings import Ratings
 from .models.menus import Menus
 from .models.ingredientCart import IngredientCart
 from .models.ingredients import Ingredients
-from .models.cart import Cart
+#from .models.cart import Cart
+from .models.barcart import BarCart
 from .models.components import Components
 
 from flask import Blueprint
@@ -46,7 +48,15 @@ class addCartForm(FlaskForm):
     unit = StringField('Unit', validators=[DataRequired()])
     submit2 = SubmitField('Add to Cart')
 
+class addBarForm(FlaskForm):
+    drinkName = StringField('Drink Name', validators=[DataRequired()])
+    timesMade = StringField('Times Made', validators=[DataRequired()])
+    submit3 = SubmitField('Add to Your Bar')
 
+class addMenuForm(FlaskForm):
+    menuName = StringField('Menu Name', validators=[DataRequired()])
+    menuSummary = StringField('Menu Summary', validators=[DataRequired()])
+    submit4 = SubmitField('Add New Menu')
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -75,26 +85,51 @@ def index():
     return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink, ingredients = ingredients)
 
 
-    
-
+@bp.route('/drink/<did>', methods=['GET', 'POST'])
+def drink(did):
+    drink = Drinks.get_by_did(did)
+    ingredients = Components.get_by_did(did)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients)
     
 @bp.route('/ratings', methods=['GET', 'POST'])
 def social():
+    my_rating = []
+    authenticated = False
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+        my_rating = Ratings.get_most_recent(current_uid)    
+
     form = SearchForm()
     rating = []
     if form.validate_on_submit():
         rating = Ratings.get_most_recent(form.search.data)    
         print(rating) 
-    return render_template('social.html', title='Rating', form=form, ratings=rating)
-
+    return render_template('social.html', title='Rating', auth=authenticated, form=form, my_ratings=my_rating, ratings=rating)
+    
 @bp.route('/menus', methods=['GET', 'POST'])
 def menu():
     form = SearchForm()
     menu = []
+    addMenu = addMenuForm()
+    my_menus = []
+    authenticated = False
+
     if form.validate_on_submit():
         menu = Menus.get_most_recent(form.search.data)    
-        print(menu) 
-    return render_template('menu.html', title='Menu', form=form, menus=menu)
+        print(menu)
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+        
+        if addMenu.submit4.data and addMenu.validate():
+            now = datetime.datetime.now()
+            usermenu = Menus(uid=current_uid, name=addMenu.menuName.data, time_made=now.strftime("%m-%d-%Y %H:%M:%S"),summary=addMenu.menuSummary.data)
+            usermenu.insert()
+            
+        my_menus = Menus.get_most_recent(current_uid)
+        print(my_menus) 
+    return render_template('menu.html', title='Menu', form=form, menus=menu, my_menus=my_menus, addMenu=addMenu, auth=authenticated)
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():
@@ -115,9 +150,6 @@ def cartIndex():
 
         # print(cart)
 
-    
-
-
     if form.submit.data and form.validate_on_submit():
         ingredient = IngredientCart.get_by_uid(form.search.data)    
         
@@ -131,6 +163,29 @@ def cartIndex():
 
     return render_template('cart.html', title='IngredientCart', form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredient, makable = makable)
 
+@bp.route('/barcart', methods=['GET', 'POST'])
+def barCart():
+
+    my_drinks=[]
+    authenticated = False
+    addBarCart = addBarForm()
+
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+        
+        if addBarCart.submit3.data and addBarCart.validate():
+            submit_drink = Drinks.get_by_name(addBarCart.drinkName.data)
+            barcart = BarCart(uid=current_uid, did=submit_drink[0].did,times_made=addBarCart.timesMade.data)
+            barcart.insert()
+            
+        my_drinks_barcart = BarCart.get_drinks_in_cart(current_uid)
+        for barcart in my_drinks_barcart:
+            drinkName = Drinks.get_by_did(barcart.did).name
+            my_drinks.append([drinkName, barcart.times_made])
+        print(my_drinks)
+    return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
+
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():
     form = SearchForm()
@@ -138,5 +193,4 @@ def recommend():
     if form.validate_on_submit():
         drink = Ingredients.get_by_ingredient(form.search.data) 
         print(drink)
-    return render_template('recommendations.html', title='Recommendations', form=form, drinks=drink)
 

@@ -58,6 +58,10 @@ class addMenuForm(FlaskForm):
     menuSummary = StringField('Menu Summary', validators=[DataRequired()])
     submit4 = SubmitField('Add New Menu')
 
+class addDrinktoMenuForm(FlaskForm):
+    drinkName = StringField('Drink Name', validators=[DataRequired()])
+    submit = SubmitField('Add Drink to Menu')
+
 class deleteReviewUidForm(FlaskForm):
     userID = StringField('User ID', validators=[DataRequired()])
     submit2 = SubmitField('Delete Cart')
@@ -163,17 +167,44 @@ def social():
         print(rating) 
     return render_template('social.html', title='Rating', form=form, deleteReviewUid = deleteReviewUid, deleteReviewDid = deleteReviewDid, deleteReviewUidDid = deleteReviewUidDid, addReview = addReview, getAvgRating = getAvgRating, ratings=rating, avgs=avg)
 
+@bp.route('/menus/<uid>/<menuName>/<summary>/<date>', methods=['GET', 'POST'])
+def menu(uid, menuName, summary, date):
+    addDrink = addDrinktoMenuForm()
+    dids = Menus.get_menudrinks(uid, menuName)
+    drinks = []
+    owned = False
+    drinkadd = True
+    for did in dids:
+        drink = Drinks.get_by_did(did)
+        drinks.append(drink)
+    if current_user.is_authenticated:
+        print(uid,current_user.uid)
+        if str(current_user.uid) == str(uid):
+            owned = True
+    if addDrink.submit.data and addDrink.validate():
+        drink = Drinks.get_by_name(addDrink.drinkName.data)
+        if len(drink) == 1:
+            Menus.insert_drink(uid, menuName, drink[0].did)
+        else:
+            drinkadd = False
+    return render_template('menu.html', title='Menu', uid=uid, menuName=menuName, 
+                            summary=summary, date=date, drinks=drinks, dids=dids, owned=owned, addDrink = addDrink,
+                            drinkadd=drinkadd)
+
 @bp.route('/menus', methods=['GET', 'POST'])
-def menu():
-    form = SearchForm()
-    menu = []
+def menus():
+    uid_search = SearchForm()
+    menus = []
     addMenu = addMenuForm()
     my_menus = []
     authenticated = False
 
-    if form.validate_on_submit():
-        menu = Menus.get_most_recent(form.search.data)    
-        print(menu)
+    if uid_search.validate_on_submit():
+        uids = Menus.uids()
+        if int(uid_search.search.data) not in uids:
+            menus = []
+        menus = Menus.get(uid_search.search.data)    
+        print(menus)
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
@@ -185,7 +216,7 @@ def menu():
             
         my_menus = Menus.get_most_recent(current_uid)
         print(my_menus) 
-    return render_template('menu.html', title='Menu', form=form, menus=menu, my_menus=my_menus, addMenu=addMenu, auth=authenticated)
+    return render_template('menus.html', title='Menus', form=uid_search, menus=menus, my_menus=my_menus, addMenu=addMenu, auth=authenticated)
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():
@@ -193,19 +224,26 @@ def cartIndex():
     ingredients = []
     makable = []
     addIngredient = []
-    # delete cart
-    localCart = IngredientCart.get_by_uid(current_user.uid)
-
     deleteCart = deleteCartForm()
     addCart = addCartForm()
+    localCart = []
+    # delete cart
+    if current_user.is_authenticated:
+        
+        localCart = IngredientCart.get_by_uid(current_user.uid)
 
-    if request.method == 'POST':
+        if request.method == 'POST':
 
-        if request.form.get('clearCart') == 'Clear Cart':
-            IngredientCart.remove_all_by_uid(current_user.uid)
-            localCart = IngredientCart.get_by_uid(current_user.uid)
-            print(localCart)
-            print("deleted cart")
+            if request.form.get('clearCart') == 'Clear Cart':
+                IngredientCart.remove_all_by_uid(current_user.uid)
+                localCart = IngredientCart.get_by_uid(current_user.uid)
+                print(localCart)
+                print("deleted cart")
+            
+            if request.form.get('add'):
+                cart = IngredientCart(uid=current_user.uid, iid=request.form.get('ingredient'), amount=100, unit="placeholder")
+                cart.insert()
+                localCart = IngredientCart.get_by_uid(current_user.uid)
 
         # # add to cart
         # if addCart.submit2.data and addCart.validate():
@@ -217,12 +255,6 @@ def cartIndex():
         if form.submit.data and form.validate_on_submit():        
             ingredients = Ingredients.get_by_name(form.search.data)
             print(ingredients)
-            
-
-        if request.form.get('add'):
-            cart = IngredientCart(uid=current_user.uid, iid=request.form.get('ingredient'), amount=100, unit="placeholder")
-            cart.insert()
-            localCart = IngredientCart.get_by_uid(current_user.uid)
 
 
 
@@ -238,7 +270,7 @@ def cartIndex():
             makable = IngredientCart.search_by_cart(iidList)
             print(makable)
 
-    return render_template('cart.html', title='IngredientCart',uid = current_user.uid, 
+    return render_template('cart.html', title='IngredientCart',
     form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredients, localCart = localCart, makable = makable)
 
 

@@ -1,100 +1,34 @@
 {% extends "base.html" %}
-
 {% block content %}
+    <h1>{{ menuName }} by User {{ uid }}</h1>
+    <h2>Summary: {{ summary }}</h2>
+    <h2>Date Made: {{ date }}</h2>
+    <br>
 
-<!-- HTML Page with search bar and search button -->
-<h1>Search for Other User Menus</h1>
-<form action="" method="post" novalidate>
-  {{ form.hidden_tag() }}
-  <p>
-    {{ form.search.label }}<br/>
-    {{ form.search(size=32) }}<br/>
-    {% for error in form.search.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  {{ form.submit(class_="btn btn-black") }} 
-
-<!-- list of menus returned from search -->
-
-{% if menus %}
-<h2>Menus</h2>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Menu Name</th>
-      <th scope="col">Menu Date</th>
-      <th scope="col">Summary</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for menu in menus %}
-      <tr>
-        <th scope="row">{{menu.name}}</td>
-        <td>{{menu.date}}</td>
-        <td>{{menu.summary}}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
-
-
-<!-- form to add drink to bar cart -->
-<br>
-<br>
-{% if auth %}
-<h1>Add New Menu</h1>
-<form action="" method="post" novalidate>
-{{ addMenu.hidden_tag() }}
-<p>
-    {{ addMenu.menuName.label }}<br />
-    {{ addMenu.menuName(size=32) }}<br />
-    {% for error in addMenu.menuName.errors %}<br />
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-</p>
-<p>
-    {{ addMenu.menuSummary.label }}<br />
-    {{ addMenu.menuSummary(size=32) }}<br />
-    {% for error in addMenu.menuSummary.errors %}<br />
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-</p>
-{{ addMenu.submit4(class_="btn btn-black") }}
-
-<br>
-<br>
-<h1>Your Menus</h1>
-{% if my_menus %}
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Menu Name</th>
-      <th scope="col">Time Made</th>
-      <th scope="col">Menu Summary</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for menu in my_menus %}
-      <tr>
-        <th scope="row">{{menu.name}}</td>
-        <td>{{menu.date}}</td>
-        <td>{{menu.summary}}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-
-<h4> You do not have any menus </h4>
-
-{% endif %}
-{% else %}
-<br>
-<br>
-<h1> Login to view personal menus! </h1>
-
-{% endif %}
+    <p><b>Drinks:</b></p>
+    <ul>
+        {% for drink in drinks %}
+            <p><a href="{{ url_for('index.drink', did = drink.did) }}">{{drink.name}}</a></p>
+        {% endfor %}
+    </ul>
+    <br>
+    <br>
+    <br>
+    {% if owned %}
+    <h1>Add Drink to Menu</h1>
+    <form action="" method="post" novalidate>
+    {{ addDrink.hidden_tag() }}
+    <p>
+        {{ addDrink.drinkName.label }}<br />
+        {{ addDrink.drinkName(size=32) }}<br />
+        {% for error in addDrink.drinkName.errors %}<br />
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    {{ addDrink.submit(class_="btn btn-black") }}
+    {% if not drinkadd %}
+    <p>Invalid drink name</p>
+    {% endif %}
+    {% endif %}
 
 {% endblock %}

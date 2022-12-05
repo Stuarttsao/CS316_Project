@@ -89,9 +89,8 @@ class getAvgRatingForm(FlaskForm):
     drinkID4 = StringField('Drink ID', validators=[DataRequired()])
     submit6 = SubmitField('Search')
 
-
 @bp.route('/', methods=['GET', 'POST'])
-def index():
+def home():
     form = SearchForm()
     drinks = []
     ingredients = []
@@ -103,8 +102,10 @@ def index():
         if drinks != []:
             ingredients = Components.get_by_did(drinks[0].did)
             print(ingredients)
+    return render_template('home.html', title='Home', form=form, drinks=drinks, ingredients = ingredients)
 
-        
+@bp.route('/add', methods=['GET', 'POST'])
+def add():
 
         # add drinks to database
     addDrink = addDrinkForm()
@@ -113,7 +114,7 @@ def index():
         drink.insert()
         print(drink)
    
-    return render_template('drinks.html', title='Home', form=form, drinks=drinks, addDrink=addDrink, ingredients = ingredients)
+    return render_template('drinks.html', title='Add Drink', addDrink=addDrink)
 
 
 @bp.route('/drink/<did>', methods=['GET', 'POST'])

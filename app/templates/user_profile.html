@@ -53,7 +53,7 @@
   <tbody>
     {% for rating in ratings %}
       <tr>
-        <th scope="row">{{rating.did}}</td>
+        <th scope="row"><a href="{{ url_for('index.drink', did = rating.did) }}">{{rating.did}}</a></td>
         <td>{{rating.time_rated}}</td>
         <td>{{rating.score}}</td>
         <td>{{rating.descript}}</td>

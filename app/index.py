@@ -178,13 +178,18 @@ def menu(uid, menuName, summary, date):
         drink = Drinks.get_by_did(did)
         drinks.append(drink)
     if current_user.is_authenticated:
-        print(uid,current_user.uid)
         if str(current_user.uid) == str(uid):
             owned = True
     if addDrink.submit.data and addDrink.validate():
         drink = Drinks.get_by_name(addDrink.drinkName.data)
         if len(drink) == 1:
             Menus.insert_drink(uid, menuName, drink[0].did)
+            drinks = []
+            dids = Menus.get_menudrinks(uid, menuName)
+            for did in dids:
+                drink = Drinks.get_by_did(did)
+                drinks.append(drink)
+                print(drinks)
         else:
             drinkadd = False
     return render_template('menu.html', title='Menu', uid=uid, menuName=menuName, 
@@ -198,13 +203,13 @@ def menus():
     addMenu = addMenuForm()
     my_menus = []
     authenticated = False
+    added = True
 
     if uid_search.validate_on_submit():
         uids = Menus.uids()
         if int(uid_search.search.data) not in uids:
             menus = []
         menus = Menus.get(uid_search.search.data)    
-        print(menus)
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
@@ -212,11 +217,10 @@ def menus():
         if addMenu.submit4.data and addMenu.validate():
             now = datetime.datetime.now()
             usermenu = Menus(uid=current_uid, name=addMenu.menuName.data, time_made=now.strftime("%m-%d-%Y %H:%M:%S"),summary=addMenu.menuSummary.data)
-            usermenu.insert()
-            
+            if not usermenu.insert():
+                added = False
         my_menus = Menus.get_most_recent(current_uid)
-        print(my_menus) 
-    return render_template('menus.html', title='Menus', form=uid_search, menus=menus, my_menus=my_menus, addMenu=addMenu, auth=authenticated)
+    return render_template('menus.html', title='Menus', form=uid_search, menus=menus, my_menus=my_menus, addMenu=addMenu, auth=authenticated, added=added)
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():

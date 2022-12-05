@@ -104,17 +104,36 @@ def home():
             print(ingredients)
     return render_template('home.html', title='Home', form=form, drinks=drinks, ingredients = ingredients)
 
+@bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    return render_template('profile.html', user=current_user)
+
+@bp.route('/profile/<uid>', methods=['GET', 'POST'])
+def user_profile(uid):
+    menus = Menus.get_most_recent(current_user.uid)
+    ratings = Ratings.get_most_recent(current_user.uid)
+    authenticated = False
+    if current_user.is_authenticated:
+        authenticated = True
+    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=current_user)
+
+
 @bp.route('/add', methods=['GET', 'POST'])
 def add():
 
         # add drinks to database
+    drink = 0
     addDrink = addDrinkForm()
     if addDrink.submit1.data and addDrink.validate_on_submit():
         drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
         drink.insert()
         print(drink)
+    
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
    
-    return render_template('drinks.html', title='Add Drink', addDrink=addDrink)
+    return render_template('drinks.html', title='Add Drink', addDrink=addDrink, drink=drink, auth=authenticated)
 
 
 @bp.route('/drink/<did>', methods=['GET', 'POST'])

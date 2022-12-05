@@ -74,11 +74,15 @@ WHERE picture = :picture
             self.insert()
 
     def insert(self):
-        self.did = app.db.execute('''
-INSERT INTO Drinks (name, category, instructions, picture)
-VALUES (:name, :category, :instructions, :picture)
-''',
+        try:
+            self.did = app.db.execute('''
+            INSERT INTO Drinks (name, category, instructions, picture)
+            VALUES (:name, :category, :instructions, :picture)
+            ''',
                                  name=self.name,
                                  category=self.category,
                                  instructions=self.instructions,
                                picture=self.picture)
+        except:
+            return False
+        return True

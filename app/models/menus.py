@@ -50,16 +50,19 @@ ORDER BY time_made DESC
         return [Menus(*row) for row in rows]
     
     def insert(self):
-        app.db.execute('''
-        INSERT INTO Menus (uid, name, time_made, summary)
-        VALUES (:uid, :name, :time_made, :summary)
-        ''',
-                                 uid=self.uid,
-                                 name=self.name,
-                                 time_made=self.date,
-                                 summary = self.summary
-                                )
-        return
+        try:
+            app.db.execute('''
+            INSERT INTO Menus (uid, name, time_made, summary)
+            VALUES (:uid, :name, :time_made, :summary)
+            ''',
+                                    uid=self.uid,
+                                    name=self.name,
+                                    time_made=self.date,
+                                    summary = self.summary
+                                    )
+        except:
+            return False
+        return True
 
     def insert_drink(uid, menuName, did):
         try:

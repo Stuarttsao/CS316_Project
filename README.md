@@ -23,7 +23,7 @@ https://drive.google.com/file/d/1RHgNgV6DWB5rsE-Zx9ld6HBAmttCSxcT/view?usp=shari
 ### Ashir
 - Update functionality of reviews (add rating, clear reviews, and get average ratings)
 
-### Jaimie
+### Jamie
 - Implemented user registration, login, authentication and use of current user information throughout database
 - Implemented bar cart so users can add drinks to cart.
 

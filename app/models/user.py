@@ -27,6 +27,16 @@ WHERE email = :email
             return None
         else:
             return User(*(rows[0][1:]))
+           
+    @staticmethod
+    def get_by_uid(uid):
+        rows = app.db.execute("""
+        SELECT password, uid, email, firstname, lastname
+        FROM Users
+        WHERE uid = :uid
+        """,
+                              uid=uid)
+        return User(*(rows[0][1:]))
 
     @staticmethod
     def email_exists(email):

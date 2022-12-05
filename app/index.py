@@ -110,12 +110,13 @@ def profile():
 
 @bp.route('/profile/<uid>', methods=['GET', 'POST'])
 def user_profile(uid):
-    menus = Menus.get_most_recent(current_user.uid)
-    ratings = Ratings.get_most_recent(current_user.uid)
+    user = User.get_by_uid(uid)
+    menus = Menus.get_most_recent(uid)
+    ratings = Ratings.get_most_recent(uid)
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True
-    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=current_user)
+    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=user)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -140,7 +141,10 @@ def add():
 def drink(did):
     drink = Drinks.get_by_did(did)
     ingredients = Components.get_by_did(did)
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients)
+    avg_rating = Ratings.get_avg_rating(did)
+    ratings = Ratings.get_by_drink(did)
+
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):

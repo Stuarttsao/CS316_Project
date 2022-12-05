@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>{{ menuName }} by User {{ uid }}</h1>
+    <h1>{{ menuName }} by <a href="{{ url_for('index.user_profile', uid = uid) }}">User #{{ uid }}</a></h1>
     <h2>Summary: {{ summary }}</h2>
     <h2>Date Made: {{ date }}</h2>
     <br>

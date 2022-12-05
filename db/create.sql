@@ -25,10 +25,11 @@ CREATE TABLE Users (
 -- );
 
 CREATE TABLE Menus(
-    uid INT NOT NULL REFERENCES Users(uid),
+    uid INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     time_made timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     summary VARCHAR(8000) NOT NULL,
+    FOREIGN KEY(uid) REFERENCES Users(uid),
     PRIMARY KEY(uid, name)
 
 );
@@ -61,38 +62,41 @@ CREATE TABLE Components(
     iid INT NOT NULL,
     did INT NOT NULL,
     amount VARCHAR(255),
-    unit VARCHAR(255)
-    --PRIMARY KEY(iid, did),
-    --FOREIGN KEY(iid) REFERENCES Ingredients(iid),
-    --FOREIGN KEY(did) REFERENCES Drinks(did)
+    unit VARCHAR(255),
+    FOREIGN KEY(iid) REFERENCES Ingredients(iid),
+    FOREIGN KEY(did) REFERENCES Drinks(did),
+    PRIMARY KEY(iid, did)
 );
 
 CREATE TABLE Ratings(
-    uid Int NOT NULL REFERENCES Users(uid),
-    did Int NOT NULL REFERENCES Drinks(did),
+    uid INT NOT NULL,
+    did INT NOT NULL,
     time_rated timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     score INT NOT NULL,
     CONSTRAINT score_ck CHECK (score BETWEEN 0 AND 5),
     descript VARCHAR(8000),
     likes INT NOT NULL,
     dislikes INT NOT NULL,
-    --PRIMARY KEY(uid,did), GO BACK AND ENFORCE UNIQUENESS
+    PRIMARY KEY(uid,did),
     FOREIGN KEY(uid) REFERENCES Users(uid),
     FOREIGN KEY(did) REFERENCES Drinks(did)
 );
 
 CREATE TABLE ingredientCart(
-    uid Int NOT NULL REFERENCES Users(uid),
-    iid Int NOT NULL REFERENCES Ingredients(iid),
+    uid INT NOT NULL,
+    iid INT NOT NULL,
     amount FLOAT NOT NULL,
-    unit VARCHAR(255) NOT NULL
-    -- PRIMARY KEY(uid,iid)
-    -- FOREIGN KEY(uid) REFERENCES Users(uid),
-    -- FOREIGN KEY(iid) REFERENCES Ingredients(iid)
+    unit VARCHAR(255) NOT NULL,
+    PRIMARY KEY(uid,iid),
+    FOREIGN KEY(uid) REFERENCES Users(uid),
+    FOREIGN KEY(iid) REFERENCES Ingredients(iid)
 );
 
 CREATE TABLE barCart(
-    uid Int NOT NULL REFERENCES Users(uid),
-    did Int NOT NULL REFERENCES Drinks(did),
-    times_made INT NOT NULL
+    uid INT NOT NULL,
+    did INT NOT NULL,
+    times_made INT NOT NULL,
+    FOREIGN KEY(uid) REFERENCES Users(uid),
+    FOREIGN KEY(did) REFERENCES Drinks(did),
+    PRIMARY KEY(uid, did)
 );

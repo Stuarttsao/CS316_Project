@@ -111,6 +111,7 @@ def gen_ingredients(num_ingredients):
     return iids
     
 def gen_components(num_components, dids, iids):
+    check = []
     with open('Components.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Components...', end=' ', flush=True)
@@ -126,7 +127,9 @@ def gen_components(num_components, dids, iids):
                 iid = ingredient_names.index(component[1])
             amount = component[2]
             unit = component[3]
-            writer.writerow([iid, did, amount, unit])
+            if (iid,did) not in check:
+                writer.writerow([iid, did, amount, unit])
+                check.append((iid,did))
         print(f'{num_components} generated')
     return
 
@@ -148,6 +151,7 @@ def gen_menus(num_menus, uids):
     return menu_names
     
 def gen_menu_drinks(num_menu_drinks, menu_names, dids):
+    menu_drinks = {}
     with open('Menu_Drinks.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Menu_Drinks...', end=' ', flush=True)
@@ -158,12 +162,18 @@ def gen_menu_drinks(num_menu_drinks, menu_names, dids):
             menu_name_id = fake.random_int(min=0, max=len(menu_names)-1)
             uid = menu_names[menu_name_id][0]
             menu_name = menu_names[menu_name_id][1]
-            link = fake.domain_name(1)
-            writer.writerow([uid, menu_name, did, link])
+            if uid not in menu_drinks:
+                menu_drinks[uid] = {}
+            if menu_name not in menu_drinks[uid]:
+                menu_drinks[uid][menu_name] = []
+            if did not in menu_drinks[uid][menu_name]:
+                writer.writerow([uid, menu_name, did])
+                menu_drinks[uid][menu_name].append(did)
         print(f'{num_menu_drinks} generated')
     return
     
 def gen_ingredient_cart(num_ingredient_carts, uids, iids):
+    check = []
     with open('IngredientCart.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('IngredientCart...', end=' ', flush=True)
@@ -174,11 +184,14 @@ def gen_ingredient_cart(num_ingredient_carts, uids, iids):
             iid = fake.random_element(elements=iids)
             amount = fake.random_int(min=0, max=100)
             unitid = fake.random_int(min=0, max=len(units)-1)
-            writer.writerow([uid, iid, amount, units[unitid]])
+            if (uid,iid) not in check:
+                writer.writerow([uid, iid, amount, units[unitid]])
+                check.append((uid,iid))
         print(f'{num_ingredient_carts} generated')
     return
 
 def gen_bar_cart(num_bar_carts, uids, dids):
+    check = []
     with open('BarCart.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('BarCart...', end=' ', flush=True)
@@ -188,11 +201,14 @@ def gen_bar_cart(num_bar_carts, uids, dids):
             uid = fake.random_element(elements=uids)
             did = fake.random_element(elements=dids)
             times_made = fake.random_int(min=0, max=20)
-            writer.writerow([uid, did, times_made])
+            if (uid, did) not in check:
+                writer.writerow([uid, did, times_made])
+                check.append((uid,did))
         print(f'{num_bar_carts} generated')
     return
     
 def gen_ratings(num_ratings, uids, dids):
+    check = []
     with open('Ratings.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Ratings...', end=' ', flush=True)
@@ -206,7 +222,9 @@ def gen_ratings(num_ratings, uids, dids):
             likes = fake.random_int(min=0, max=100)
             dislikes = fake.random_int(min=0, max=100)
             description = fake.sentence(nb_words=8)[:-1]
-            writer.writerow([uid, did, date, score, description, likes, dislikes])
+            if (uid,did) not in check:
+                writer.writerow([uid, did, date, score, description, likes, dislikes])
+                check.append((uid,did))
         print(f'{num_ratings} generated')
     return
 

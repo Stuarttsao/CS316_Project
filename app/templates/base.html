@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Mini Amazon</title>
+  <title>Mini-CocktailDB</title>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -52,7 +52,7 @@
         <span class="menu-line"></span>
         <span class="menu-line"></span>
       </div>
-
+    
     </label>
     <div class="full-page-menu"></div>
     <div class="ham-menu">
@@ -64,6 +64,7 @@
         <li><a class="sidenav-item" href="/recommendations"> Recommendations </a></li>
         <li><a class="sidenav-item" href="/cart"> Ingredient Cart </a></li>
         <li><a class="sidenav-item" href="/barcart"> Bar Cart </a></li>
+        <li><a class="sidenav-item" href="{{ url_for('index.profile') }}"> User Profile </a></li>
         <li><a class="sidenav-item" href="{{ url_for('users.login') }}"> Log In </a></li>
       </ul>
     </div>

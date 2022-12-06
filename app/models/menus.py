@@ -87,3 +87,12 @@ WHERE uid = :uid AND menuName = :name
                               uid=uid, name=menuName)
         print(drinks)
         return [drink[0] for drink in drinks]
+
+    def delete_menu(uid, name):
+        app.db.execute(''' DELETE FROM MenuDrinks WHERE uid = :uid AND menuName = :name ''',
+                        uid = uid,
+                        name = name)  
+        app.db.execute(''' DELETE FROM Menus WHERE uid = :uid AND name = :name ''',
+                        uid = uid,
+                        name = name)  
+        return

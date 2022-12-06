@@ -17,6 +17,7 @@
 
 <!-- list of menus returned from search -->
 
+{% if search %}
 {% if menus %}
 <h2>Menus</h2>
 <table class='table table-hover table-bordered container'>
@@ -37,6 +38,7 @@
     {% endfor %}
   </tbody>
 </table>
+{% endif %}
 {% else %}
 <h4> No menus for this user id </h4>
 {% endif %}
@@ -78,6 +80,7 @@
       <th scope="col">Menu Name</th>
       <th scope="col">Time Made</th>
       <th scope="col">Menu Summary</th>
+      <th scope="col">Delete Menu</th>
     </tr>
   </thead>
   <tbody>
@@ -86,6 +89,11 @@
         <th scope="row"><a href="{{ url_for('index.menu', uid = menu.uid, menuName=menu.name, summary=menu.summary, date=menu.date) }}">{{menu.name}}</a></td>
         <td>{{menu.date}}</td>
         <td>{{menu.summary}}</td>
+        <td>
+          <form method="POST" action="/menus">
+            <input type="submit" value="Delete {{menu.name}}" name="deleteMenu" size="1">
+          </form>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
@@ -98,7 +106,10 @@
 {% else %}
 <br>
 <br>
-<h1> Login to view personal menus! </h1>
+<h1> You are not logged in! </h1>
+<h3> Please <strong>Log In</strong> to view your personal menus or <strong>Register</strong> to begin your Mini-Cocktail DB Adventure! </h3>
+<a class="btn btn-secondary" href="{{ url_for('users.login') }}" role="button">Log in</a>
+<a class="btn btn-secondary" href="{{ url_for('users.register') }}" role="button">Register</a>
 
 {% endif %}
 

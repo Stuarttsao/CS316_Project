@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if authenticated %}
+<h1>Your Ratings</h1>
+{% if ratings %}
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink</th>
+      <th scope="col">Rating Date</th>
+      <th scope="col">Score</th>
+      <th scope="col">Review</th>
+      <th scope="col">Likes</th>
+      <th scope="col">Dislikes</th>
+      <th scope="col">Edit Rating</th>
+      <th scope="col">Delete Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for rating in ratings %}
+      <tr>
+        <th scope="row">{{rating[0]}}</td>
+        <td>{{rating[1].time_rated}}</td>
+        <td>{{rating[1].score}}</td>
+        <td>{{rating[1].descript}}</td>
+        <td>{{rating[1].likes}}</td>
+        <td>{{rating[1].dislikes}}</td>
+        <td>
+          <form method="POST" action="/ratings">
+            <input type="submit" value="Edit {{rating[0]}}" name="editRating" size="1">
+          </form>
+        </td>
+        <td>
+          <form method="POST" action="/ratings">
+            <input type="submit" value="Delete {{rating[0]}}" name="deleteRating" size="1">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<h2> You have not rated any drink yet. You can rate drinks from the individual drink page! </h2>
+{% endif %}
+{% else %}
+<h1> You are not logged in! </h1>
+<h3> Please <strong>Log In</strong> to view your ratings or <strong>Register</strong> to begin your Mini-Cocktail DB Adventure! </h3>
+<a class="btn btn-secondary" href="{{ url_for('users.login') }}" role="button">Log in</a>
+<a class="btn btn-secondary" href="{{ url_for('users.register') }}" role="button">Register</a>
+{% endif %}
+
+{% endblock %}

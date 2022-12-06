@@ -153,44 +153,26 @@ def drink(did):
 
 
 @bp.route('/ratings', methods=['GET', 'POST'])
-def social():
-    form = SearchForm()
-    rating = []
-
-    # delete by uid
-    deleteReviewUid = deleteReviewUidForm()
-    if deleteReviewUid.validate_on_submit():
-        Ratings.remove_all_by_uid(deleteReviewUid.userID.data)
-
-    # delete by did
-    deleteReviewDid = deleteReviewDidForm()
-    if deleteReviewDid.validate_on_submit():
-        Ratings.remove_all_by_did(deleteReviewDid.drinkID.data)
-
-    # delete by uid/did combo
-    deleteReviewUidDid = deleteReviewUidDidForm()
-    if deleteReviewUidDid.validate_on_submit():
-        Ratings.remove_all_by_uid_did(deleteReviewUidDid.userID2.data, deleteReviewUidDid.drinkID2.data)
-    
-    # add to reviews
-    addReview = addReviewForm()
-    if addReview.validate():
-        print("cart")
-        cart = Ratings(uid=addReview.userID3.data, did=addReview.drinkID3.data, time_rated=addReview.time_rated.data, score=addReview.score.data, descript=addReview.descript.data, likes=addReview.likes.data, dislikes=addReview.dislikes.data)
-        cart.insert()
-
-    # find average rating of a drink
-    getAvgRating = getAvgRatingForm()
-    avg = 0
-    if getAvgRating.validate_on_submit():
-        avg = Ratings.get_avg_rating(getAvgRating.drinkID4.data)
-        print(avg)
-
-
-    if form.validate_on_submit():
-        rating = Ratings.get_most_recent(form.search.data)    
-        print(rating) 
-    return render_template('social.html', title='Rating', form=form, deleteReviewUid = deleteReviewUid, deleteReviewDid = deleteReviewDid, deleteReviewUidDid = deleteReviewUidDid, addReview = addReview, getAvgRating = getAvgRating, ratings=rating, avgs=avg)
+def ratings():
+    authenticated = False
+    current_uid = -1
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+    if request.method == 'POST':
+        if request.form.get("deleteRating"):
+            name = request.form.get('deleteRating')[7:]
+            name = Drinks.get_by_name(name).did
+            Ratings.remove_all_by_uid_did(current_uid, name)
+        if request.form.get("editRating"):
+            name = request.form.get('editRating')[5:]
+            # add edit functionality here
+    ratings = Ratings.get(current_uid)
+    ratings_new = []
+    for rating in ratings:
+        name = Drinks.get_by_did(rating.did).name
+        ratings_new.append((name, rating))
+    return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings)
 
 @bp.route('/menus/<uid>/<menuName>/<summary>/<date>', methods=['GET', 'POST'])
 def menu(uid, menuName, summary, date):
@@ -225,6 +207,7 @@ def menu(uid, menuName, summary, date):
 def menus():
     uid_search = SearchForm()
     menus = []
+    search = True
     addMenu = addMenuForm()
     my_menus = []
     authenticated = False
@@ -234,7 +217,11 @@ def menus():
         uids = Menus.uids()
         if int(uid_search.search.data) not in uids:
             menus = []
-        menus = Menus.get(uid_search.search.data)    
+        menus = Menus.get(uid_search.search.data)
+        if menus:
+            search = True
+        else:
+            search = False
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
@@ -244,8 +231,12 @@ def menus():
             usermenu = Menus(uid=current_uid, name=addMenu.menuName.data, time_made=now.strftime("%m-%d-%Y %H:%M:%S"),summary=addMenu.menuSummary.data)
             if not usermenu.insert():
                 added = False
+        if request.method == 'POST':
+            if request.form.get("deleteMenu"):
+                name = request.form.get('deleteMenu')[7:]
+                Menus.delete_menu(current_user.uid, name)
         my_menus = Menus.get_most_recent(current_uid)
-    return render_template('menus.html', title='Menus', form=uid_search, menus=menus, my_menus=my_menus, addMenu=addMenu, auth=authenticated, added=added)
+    return render_template('menus.html', title='Menus', form=uid_search, menus=menus, my_menus=my_menus, addMenu=addMenu, auth=authenticated, added=added, search=search)
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cartIndex():

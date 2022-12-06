@@ -30,6 +30,7 @@
     {% endfor %}
   </tbody>
 </table>
+<h4> View All Your Menus <a class="btn btn-secondary" href="{{ url_for('index.menus') }}" role="button" style="height:10px;width:100px;font-size:15px">Menus</a></h4>
 {% else %}
 
 <h4> You do not have any menus </h4>
@@ -63,9 +64,61 @@
     {% endfor %}
   </tbody>
 </table>
+<h4> View Your Rating History <a class="btn btn-secondary" href="{{ url_for('index.ratings, uid=user.uid') }}" role="button" style="height:10px;width:100px;font-size:15px">Ratings</a></h4>
+
+
 {% else %}
 
 <h4> You do not have any ratings </h4>
+
+{% endif %}
+
+
+{% if barcart %}
+<h2>Drinks In Your BarCart</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink</th>
+      <th scope="col">Times Made</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for drink in barcart %}
+      <tr>
+        <th scope="row"><a href="{{ url_for('index.drink', did = drink[1].did) }}">{{drink[0]}}</a></td>
+        <td>{{drink[1].times_made}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h4> View Your Full BarCart <a class="btn btn-secondary" href="{{ url_for('index.barCart') }}" role="button" style="height:10px;width:100px;font-size:15px">BarCart</a></h4>
+{% else %}
+
+<h4> You do not have any drinks in your BarCart </h4>
+
+{% endif %}
+
+
+{% if drinks %}
+<h2>Drinks You Have Contributed</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Drink</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for drink in drinks %}
+      <tr>
+        <th scope="row"><a href="{{ url_for('index.drink', did = drink[1].did) }}">{{drink[0]}}</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+
+<h4> You have not contributed any drinks </h4>
 
 {% endif %}
 

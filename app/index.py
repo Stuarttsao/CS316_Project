@@ -19,6 +19,7 @@ from .models.menus import Menus
 from .models.ingredientCart import IngredientCart
 from .models.ingredients import Ingredients
 #from .models.cart import Cart
+from .models.bartender import Bartender
 from .models.barcart import BarCart
 from .models.components import Components
 
@@ -113,10 +114,20 @@ def user_profile(uid):
     user = User.get_by_uid(uid)
     menus = Menus.get_most_recent(uid)
     ratings = Ratings.get_most_recent(uid)
+    barcart = BarCart.get_most_made(uid)
+    disp_bar = []
+    for drink in barcart:
+        thisDrink = Drinks.get_by_did(drink.did)
+        disp_bar.append((thisDrink.name, drink))
+    user_drinks = Bartender.get_all(uid)
+    disp_drinks = []
+    for drink in user_drinks:
+        thisDrink = Drinks.get_by_did(drink.did)
+        disp_drinks.append((thisDrink.name, drink))
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True
-    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=user)
+    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=user, barcart=disp_bar, drinks=disp_drinks)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -124,16 +135,21 @@ def add():
 
         # add drinks to database
     drink = 0
+    addedDrink = False
+    newDrink = False
     addDrink = addDrinkForm()
     if addDrink.submit1.data and addDrink.validate_on_submit():
         drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
         drink.insert()
-        print(drink)
+        addedDrink = True
+        newDrink = Drinks.get_by_name(addDrink.drinkName.data)
         
     authenticated = False
     if current_user.is_authenticated:
-        current_uid = current_user.uid
         authenticated = True
+        if addedDrink:
+            author = Bartender(uid=current_user.uid, did=newDrink[0].did)
+            author.insert()
    
     return render_template('drinks.html', title='Add Drink', addDrink=addDrink, drink=drink, auth=authenticated)
 
@@ -144,8 +160,14 @@ def drink(did):
     ingredients = Components.get_by_did(did)
     avg_rating = Ratings.get_avg_rating(did)
     ratings = Ratings.get_by_drink(did)
+    author = Bartender.get_by_did(did)
+    edit = False
+    if author:
+        author = author.uid
+    if author == current_user.uid:
+        edit = True
 
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, edit=edit)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):
@@ -315,8 +337,9 @@ def barCart():
         if my_drinks_barcart:
             for barcart in my_drinks_barcart:
                 drinkName = Drinks.get_by_did(barcart.did).name
-                my_drinks.append([drinkName, barcart.times_made])
+                my_drinks.append((drinkName, barcart))
             print(my_drinks)
+
     return render_template('barcart.html', title='BarCart', auth=authenticated, addBarCart=addBarCart, my_drinks=my_drinks)
 
 @bp.route('/recommendations', methods=['GET', 'POST'])

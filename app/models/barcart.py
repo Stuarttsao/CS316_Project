@@ -17,19 +17,38 @@ class BarCart:
         SELECT uid, did, times_made
         FROM barCart
         WHERE uid = :uid
+        ORDER BY times_made DESC
         ''',
                               uid=uid)
         return [BarCart(*row) for row in rows] if rows else None
 
-    def insert(self):
-        app.db.execute('''
-        INSERT INTO barCart (uid, did, times_made)
-        VALUES (:uid, :did, :times_made)
+    @staticmethod
+    def get_most_made(uid):
+        rows = app.db.execute('''
+        SELECT uid, did, times_made
+        FROM barCart
+        WHERE uid = :uid
+        ORDER BY times_made DESC
+        LIMIT 5
         ''',
-                                 uid=self.uid,
-                                 did=self.did,
-                                 times_made=self.times_made,
-                                )
+                              uid=uid)
+        return [BarCart(*row) for row in rows] if rows else None
+
+    def update(self, times_made):
+        app.db.execute(''' UPDATE barCart SET uid = :uid, did = :did, times_made = times_made + :times_made WHERE did = :did ''', uid=self.uid, did=self.did, times_made=times_made)
+
+    def insert(self):
+        try:
+            app.db.execute('''
+            INSERT INTO barCart (uid, did, times_made)
+            VALUES (:uid, :did, :times_made)
+            ''',
+                                    uid=self.uid,
+                                    did=self.did,
+                                    times_made=self.times_made,
+                                    )
+        except:
+            self.update(self.times_made)
 
     @staticmethod
     def remove_drink(uid, did):

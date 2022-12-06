@@ -17,6 +17,10 @@
     <p><b>Instructions:</b></p>
     <p>{{ drink.instructions }}</p>
 
+    {% if edit %}
+    <p><b> Edit Drink: </b></p>
+    {% endif %}
+
     {% if ratings %}
     <p><b>Recent Rating History:</b></p>
     <table class='table table-hover table-bordered container'>

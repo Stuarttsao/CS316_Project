@@ -100,3 +100,11 @@ CREATE TABLE barCart(
     FOREIGN KEY(did) REFERENCES Drinks(did),
     PRIMARY KEY(uid, did)
 );
+
+CREATE TABLE Bartender(
+    uid INT NOT NULL,
+    did INT NOT NULL,
+    FOREIGN KEY(uid) REFERENCES Users(uid),
+    FOREIGN KEY(did) REFERENCES Drinks(did),
+    PRIMARY KEY(did)
+);

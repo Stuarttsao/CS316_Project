@@ -129,7 +129,8 @@ def add():
         drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
         drink.insert()
         print(drink)
-    
+        
+    authenticated = False
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>{{ drink.name }}</h1>
-    {% if avg[0][0] %}
+    {% if ratings %}
     <p>{{avg[0][0]}} &#9733</p>
     {% endif %}
     <p><b>Category: </b>{{ drink.category }}</p>

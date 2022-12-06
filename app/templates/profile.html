@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user %}
+{% if user.uid %}
 <h1> Taking You to Your Profile Page...</h1>
 <meta http-equiv="refresh" content="2; URL={{ url_for('index.user_profile', uid=user.uid) }}" />
 

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
     <h1>{{ drink.name }}</h1>
     {% if ratings %}
     <p>{{avg[0][0]}} &#9733</p>
@@ -7,7 +8,8 @@
     <p><b>Category: </b>{{ drink.category }}</p>
 
     <img class="drink-picture" src="{{ drink.picture }}" alt="{{ drink.name }}">
-    
+    <br></br>
+
     <p><b>Ingredients:</b></p>
     <ul>
         {% for ingredient in ingredients %}
@@ -16,10 +18,6 @@
     </ul>
     <p><b>Instructions:</b></p>
     <p>{{ drink.instructions }}</p>
-
-    {% if edit %}
-    <p><b> Edit Drink: </b></p>
-    {% endif %}
 
     {% if ratings %}
     <p><b>Recent Rating History:</b></p>
@@ -49,7 +47,26 @@
     </table>
     {% endif %}
 
-    <h1>Add Review to Reviews</h1>
+    {% if edit %}
+    <br />
+    <br />
+    <br />
+    <h2> <b>Edit Your Drink Properties:</b> </h2>
+    <form action="" method="post" novalidate>
+      {{ editDrink.hidden_tag() }}
+    <p>
+      {{ editDrink.drinkInstructions.label }}<br />
+      {{ editDrink.drinkInstructions(size=32, value=drink.instructions) }}<br />
+      {% for error in editDrink.drinkInstructions.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    
+    {{ editDrink.submit_edit(class_="btn btn-black") }}
+
+    {% else %}
+    <br />
+    <h2><b>Review Drink:</b></h2>
     <form action="" method="post" novalidate>
       {{ addReview.hidden_tag() }}
       <p>
@@ -74,6 +91,6 @@
         {% endfor %}
       </p>
       {{ addReview.submit5(class_="btn btn-black") }}
-
+    {% endif %}
 {% endblock %}
 

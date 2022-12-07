@@ -67,6 +67,13 @@ WHERE picture = :picture
                               picture=picture)
         return Drinks(*(rows[0])) if rows else None
 
+    def update(self, instructions):
+        app.db.execute(''' 
+        UPDATE Drinks 
+        SET did = :did, name = :name, category = :category, instructions = :instructions, picture = :picture
+        WHERE did = :did ''', 
+        did=self.did, name=self.name, category=self.category, instructions=instructions, picture=self.picture)
+
     def save(self):
         if self.did:
             self.update()

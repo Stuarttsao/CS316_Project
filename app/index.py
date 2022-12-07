@@ -143,14 +143,16 @@ def user_profile(uid):
     ratings = Ratings.get_most_recent(uid)
     barcart = BarCart.get_most_made(uid)
     disp_bar = []
-    for drink in barcart:
-        thisDrink = Drinks.get_by_did(drink.did)
-        disp_bar.append((thisDrink.name, drink))
+    if barcart:
+        for drink in barcart:
+            thisDrink = Drinks.get_by_did(drink.did)
+            disp_bar.append((thisDrink.name, drink))
     user_drinks = Bartender.get_all(uid)
     disp_drinks = []
-    for drink in user_drinks:
-        thisDrink = Drinks.get_by_did(drink.did)
-        disp_drinks.append((thisDrink.name, drink))
+    if user_drinks:
+        for drink in user_drinks:
+            thisDrink = Drinks.get_by_did(drink.did)
+            disp_drinks.append((thisDrink.name, drink))
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True
@@ -198,7 +200,7 @@ def drink(did):
     
     # add to reviews
     addReview = addReviewForm()
-    if authenticated and addReview.validate():
+    if authenticated and addReview.validate_on_submit():
         now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         print("cart")
         cart = Ratings(uid=current_uid, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
@@ -248,23 +250,24 @@ def drink(did):
 def ratings():
     authenticated = False
     current_uid = -1
+    ratings_new = []
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
-    if request.method == 'POST':
-        if request.form.get("deleteRating"):
-            name = request.form.get('deleteRating')[7:]
-            name = Drinks.get_by_name(name).did
-            Ratings.remove_all_by_uid_did(current_uid, name)
-        if request.form.get("editRating"):
-            name = request.form.get('editRating')[5:]
-            # add edit functionality here
-    ratings = Ratings.get(current_uid)
-    ratings_new = []
-    for rating in ratings:
-        name = Drinks.get_by_did(rating.did).name
-        ratings_new.append((name, rating))
-    return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings)
+        if request.method == 'POST':
+            if request.form.get("deleteRating"):
+                name = request.form.get('deleteRating')[7:]
+                name = Drinks.get_by_name(name)[0].did
+                Ratings.remove_all_by_uid_did(current_uid, name)
+            if request.form.get("editRating"):
+                name = request.form.get('editRating')[5:]
+                # add edit functionality here
+        ratings = Ratings.get(current_uid)
+        if ratings:
+            for rating in ratings:
+                name = Drinks.get_by_did(rating.did).name
+                ratings_new.append((name, rating))
+    return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings_new)
 
 @bp.route('/menus/<uid>/<menuName>/<summary>/<date>', methods=['GET', 'POST'])
 def menu(uid, menuName, summary, date):

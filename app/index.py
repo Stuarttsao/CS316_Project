@@ -160,6 +160,15 @@ def add():
 
 @bp.route('/drink/<did>', methods=['GET', 'POST'])
 def drink(did):
+    
+    # add to reviews
+    addReview = addReviewForm()
+    if addReview.validate():
+        now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+        print("cart")
+        cart = Ratings(uid=addReview.userID3.data, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
+        cart.insert()
+    
     drink = Drinks.get_by_did(did)
     ingredients = Components.get_by_did(did)
     avg_rating = Ratings.get_avg_rating(did)

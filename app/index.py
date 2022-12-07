@@ -23,6 +23,7 @@ from .models.bartender import Bartender
 from .models.barcart import BarCart
 from .models.components import Components
 
+
 from flask import Blueprint
 bp = Blueprint('index', __name__)
 
@@ -344,9 +345,9 @@ def barCart():
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():
-    form = SearchForm()
+    #form = SearchForm()
     drink = []
-    if form.validate_on_submit():
-        drink = Ingredients.get_by_ingredient(form.search.data) 
-        print(drink)
+    
+
+    return render_template('recommendations.html')
 

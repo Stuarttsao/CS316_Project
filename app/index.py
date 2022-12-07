@@ -162,7 +162,7 @@ def add():
 def drink(did):
 
     authenticated = False
-    current_uid = 0
+    current_uid = -1
 
     voted = False
 
@@ -172,7 +172,7 @@ def drink(did):
     
     # add to reviews
     addReview = addReviewForm()
-    if addReview.validate():
+    if authenticated and addReview.validate():
         now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         print("cart")
         cart = Ratings(uid=current_uid, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)

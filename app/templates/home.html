@@ -21,6 +21,19 @@
         {% endfor %}
       </p>
       {{ form.submit(class_="btn btn-black") }}
+
+
+      <form method="post" action="/">
+        <select id="seachTerm" name="seachTerm">
+            <option value="drink">drink</option>
+            <option value="category">category</option>
+            <option value="ingredient">ingredient</option>
+        </select>
+      </form> 
+      <!-- checkboxs to determain if search by name ingredient or category -->
+
+
+
       <div id="result"></div>
 
       {% if drinks %}

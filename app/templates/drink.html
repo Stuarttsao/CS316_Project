@@ -49,5 +49,31 @@
     </table>
     {% endif %}
 
+    <h1>Add Review to Reviews</h1>
+    <form action="" method="post" novalidate>
+      {{ addReview.hidden_tag() }}
+      <p>
+        {{ addReview.userID3.label }}<br/>
+        {{ addReview.userID3(size=32) }}<br/>
+        {% for error in addReview.userID3.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ addReview.score.label }}<br/>
+        {{ addReview.score(size=32) }}<br/>
+        {% for error in addReview.score.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ addReview.descript.label }}<br/>
+        {{ addReview.descript(size=32) }}<br/>
+        {% for error in addReview.descript.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      {{ addReview.submit5(class_="btn btn-black") }}
+
 {% endblock %}
 

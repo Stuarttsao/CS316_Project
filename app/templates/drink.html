@@ -30,6 +30,8 @@
         <th scope="col">Review</th>
         <th scope="col">Likes</th>
         <th scope="col">Dislikes</th>
+        <th scope="col">Upvote Rating</th>
+        <th scope="col">Downvote Rating</th>
         </tr>
     </thead>
     <tbody>
@@ -41,6 +43,20 @@
             <td>{{rating.descript}}</td>
             <td>{{rating.likes}}</td>
             <td>{{rating.dislikes}}</td>
+            <td>
+              <form method="POST" action="/drink/{{rating.did}}">
+                <input type="submit" value="Upvote this Review" name="upvote" size="1">
+                <input type="hidden" value="{{rating.did}}" name="did_out">
+                <input type="hidden" value="{{rating.uid}}" name="uid_out">
+              </form>
+            </td>
+            <td>
+              <form method="POST" action="/drink/{{rating.did}}">
+                <input type="submit" value="Downvote this Review" name="downvote" size="1">
+                <input type="hidden" value="{{rating.did}}" name="did_out">
+                <input type="hidden" value="{{rating.uid}}" name="uid_out">
+              </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -69,13 +85,6 @@
     <h2><b>Review Drink:</b></h2>
     <form action="" method="post" novalidate>
       {{ addReview.hidden_tag() }}
-      <p>
-        {{ addReview.userID3.label }}<br/>
-        {{ addReview.userID3(size=32) }}<br/>
-        {% for error in addReview.userID3.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-      </p>
       <p>
         {{ addReview.score.label }}<br/>
         {{ addReview.score(size=32) }}<br/>

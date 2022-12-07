@@ -81,7 +81,7 @@ class deleteReviewUidDidForm(FlaskForm):
     submit4 = SubmitField('Delete Cart')
 
 class addReviewForm(FlaskForm):
-    userID3 = StringField('User ID', validators=[DataRequired()])
+    #userID3 = StringField('User ID', validators=[DataRequired()])
     #drinkID3 = StringField('Drink ID', validators=[DataRequired()])
     #time_rated = StringField('Time Rated', validators=[DataRequired()])
     score = StringField('Score', validators=[DataRequired()])
@@ -160,15 +160,39 @@ def add():
 
 @bp.route('/drink/<did>', methods=['GET', 'POST'])
 def drink(did):
+
+    authenticated = False
+    current_uid = 0
+
+    voted = False
+
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
     
     # add to reviews
     addReview = addReviewForm()
     if addReview.validate():
         now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         print("cart")
-        cart = Ratings(uid=addReview.userID3.data, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
+        cart = Ratings(uid=current_uid, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
         cart.insert()
+
+    #upvote/downvote functionality
     
+    if request.method == 'POST':
+        if voted == False:
+            if request.form.get("upvote"):
+                did_in = request.form.get('did_out')
+                uid_in = request.form.get('uid_out')
+                Ratings.upvote(uid_in, did_in)
+                voted = True
+            if request.form.get("downvote"):
+                did_in = request.form.get('did_out')
+                uid_in = request.form.get('uid_out')
+                Ratings.downvote(uid_in, did_in)
+                voted = True
+
     drink = Drinks.get_by_did(did)
     ingredients = Components.get_by_did(did)
     avg_rating = Ratings.get_avg_rating(did)
@@ -181,13 +205,6 @@ def drink(did):
             if author == current_user.uid:
                 edit = True
 
-    # add to reviews
-    addReview = addReviewForm()
-    if addReview.validate_on_submit():
-        now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
-        print("cart")
-        cart = Ratings(uid=addReview.userID3.data, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
-        cart.insert()
     
     editDrink = editDrinkForm()
     if editDrink.validate_on_submit():

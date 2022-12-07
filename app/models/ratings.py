@@ -103,3 +103,15 @@ LIMIT 5
                             descript=self.descript,
                             likes=self.likes,
                             dislikes=self.dislikes)
+
+    @staticmethod
+    def downvote(uid, did):
+        app.db.execute(''' UPDATE Ratings Set dislikes = dislikes + 1 WHERE dislikes >= 0 AND uid = :uid AND did = :did ''',
+                        uid = uid,
+                        did = did)
+
+    @staticmethod
+    def upvote(uid, did):
+        app.db.execute(''' UPDATE Ratings Set likes = likes + 1 WHERE likes >= 0 AND uid = :uid AND did = :did''',
+                        uid = uid,
+                        did = did)

@@ -116,7 +116,15 @@ def home():
     ingredients = []
 
     if form.submit.data and form.validate_on_submit():
-        drinks = Drinks.get_by_name(form.search.data) 
+        checked = request.form.get('seachTerm') 
+        print(checked)
+        if checked == "drink":
+            drinks = Drinks.get_by_name(form.search.data) 
+        elif checked == "ingredient":
+            drinks = Drinks.get_drinks_by_ingredientName(form.search.data)
+        elif checked == "category":
+            drinks = Drinks.get_by_category(form.search.data)
+        
            
         print(drinks) 
         if drinks != []:

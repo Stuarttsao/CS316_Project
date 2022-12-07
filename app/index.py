@@ -26,6 +26,21 @@ from .models.components import Components
 from flask import Blueprint
 bp = Blueprint('index', __name__)
 
+import openai
+secret = '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'
+
+def generateImage(text):
+    openai.api_key = secret
+    response = openai.Image.create(
+        prompt=text,
+        n =2,
+        size= "256x256",
+    )
+    return response
+
+
+
+
 
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -143,11 +158,14 @@ def add():
     newDrink = False
     addDrink = addDrinkForm()
     if addDrink.submit1.data and addDrink.validate_on_submit():
-        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
+        res = generateImage(addDrink.drinkName.data + "cocktail")
+
+        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=res["data"][0]["url"], instructions=addDrink.drinkInstructions.data)
         drink.insert()
         addedDrink = True
         newDrink = Drinks.get_by_name(addDrink.drinkName.data)
-        
+        return redirect(url_for('index.drink', did= newDrink[0].did))
+
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True

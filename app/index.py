@@ -38,6 +38,10 @@ class addDrinkForm(FlaskForm):
     drinkImage = StringField('Drink Image', validators=[DataRequired()])
     submit1 = SubmitField('Add Drink')
 
+class editDrinkForm(FlaskForm):
+    drinkInstructions = StringField('Drink Instructions', validators=[DataRequired()])
+    submit_edit = SubmitField('Submit Edit')
+
 class deleteCartForm(FlaskForm):
     userID1 = StringField('User ID', validators=[DataRequired()])
     submit1 = SubmitField('Clear Cart')
@@ -164,18 +168,24 @@ def drink(did):
     edit = False
     if author:
         author = author.uid
-        if author == current_user.uid:
-            edit = True
+        if current_user.is_authenticated:
+            if author == current_user.uid:
+                edit = True
 
     # add to reviews
     addReview = addReviewForm()
-    if addReview.validate():
+    if addReview.validate_on_submit():
         now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         print("cart")
         cart = Ratings(uid=addReview.userID3.data, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
         cart.insert()
+    
+    editDrink = editDrinkForm()
+    if editDrink.validate_on_submit():
+        drink.update(editDrink.drinkInstructions.data)
 
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, addReview = addReview)
+    drink = Drinks.get_by_did(did)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):

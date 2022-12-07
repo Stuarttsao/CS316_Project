@@ -16,7 +16,7 @@ FROM Drinks
 WHERE did = :did
 ''',
                               did=did)
-        return Drinks(*(rows[0])) if rows else None
+        return [Drinks(*row) for row in rows]
 
     @staticmethod
     def get_by_name(name):
@@ -45,7 +45,9 @@ FROM Drinks
 WHERE category = :category
 ''',
                               category=category)
-        return Drinks(*(rows[0])) if rows else None
+        print("rows", rows)
+        print(rows)
+        return [Drinks(*row) for row in rows]
 
     @staticmethod
     def get_by_instructions(instructions):
@@ -57,15 +59,27 @@ WHERE instructions = :instructions
                               instructions=instructions)
         return Drinks(*(rows[0])) if rows else None
 
+
     @staticmethod
-    def get_by_picture(picture):
+    def get_drinks_by_ingredientName(ingredientName):
         rows = app.db.execute('''
-SELECT did, name, category, instructions, picture
-FROM Drinks
-WHERE picture = :picture
+SELECT Drinks.did, Drinks.name, Drinks.category, Drinks.instructions, Drinks.picture
+FROM Drinks, Ingredients, Components
+WHERE Ingredients.name = :ingredientName AND Ingredients.iid = Components.iid AND Components.did = Drinks.did
 ''',
-                              picture=picture)
-        return Drinks(*(rows[0])) if rows else None
+                                ingredientName=ingredientName)
+        return [Drinks(*row) for row in rows]
+
+
+
+
+
+    def update(self, instructions):
+        app.db.execute(''' 
+        UPDATE Drinks 
+        SET did = :did, name = :name, category = :category, instructions = :instructions, picture = :picture
+        WHERE did = :did ''', 
+        did=self.did, name=self.name, category=self.category, instructions=instructions, picture=self.picture)
 
     def save(self):
         if self.did:

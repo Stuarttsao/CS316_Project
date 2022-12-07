@@ -27,6 +27,21 @@ from .models.components import Components
 from flask import Blueprint
 bp = Blueprint('index', __name__)
 
+import openai
+secret = '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'
+
+def generateImage(text):
+    openai.api_key = secret
+    response = openai.Image.create(
+        prompt=text,
+        n =2,
+        size= "256x256",
+    )
+    return response
+
+
+
+
 
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -38,6 +53,10 @@ class addDrinkForm(FlaskForm):
     drinkInstructions = StringField('Drink Instructions', validators=[DataRequired()])
     drinkImage = StringField('Drink Image', validators=[DataRequired()])
     submit1 = SubmitField('Add Drink')
+
+class editDrinkForm(FlaskForm):
+    drinkInstructions = StringField('Drink Instructions', validators=[DataRequired()])
+    submit_edit = SubmitField('Submit Edit')
 
 class deleteCartForm(FlaskForm):
     userID1 = StringField('User ID', validators=[DataRequired()])
@@ -78,13 +97,13 @@ class deleteReviewUidDidForm(FlaskForm):
     submit4 = SubmitField('Delete Cart')
 
 class addReviewForm(FlaskForm):
-    userID3 = StringField('User ID', validators=[DataRequired()])
-    drinkID3 = StringField('Drink ID', validators=[DataRequired()])
-    time_rated = StringField('Time Rated', validators=[DataRequired()])
+    #userID3 = StringField('User ID', validators=[DataRequired()])
+    #drinkID3 = StringField('Drink ID', validators=[DataRequired()])
+    #time_rated = StringField('Time Rated', validators=[DataRequired()])
     score = StringField('Score', validators=[DataRequired()])
     descript = StringField('Description', validators=[DataRequired()])
-    likes = StringField('Likes', validators=[DataRequired()])
-    dislikes = StringField('Dislikes', validators=[DataRequired()])
+    #likes = StringField('Likes', validators=[DataRequired()])
+    #dislikes = StringField('Dislikes', validators=[DataRequired()])
     submit5 = SubmitField('Add to Cart')
 
 class getAvgRatingForm(FlaskForm):
@@ -98,7 +117,15 @@ def home():
     ingredients = []
 
     if form.submit.data and form.validate_on_submit():
-        drinks = Drinks.get_by_name(form.search.data) 
+        checked = request.form.get('seachTerm') 
+        print(checked)
+        if checked == "drink":
+            drinks = Drinks.get_by_name(form.search.data) 
+        elif checked == "ingredient":
+            drinks = Drinks.get_drinks_by_ingredientName(form.search.data)
+        elif checked == "category":
+            drinks = Drinks.get_by_category(form.search.data)
+        
            
         print(drinks) 
         if drinks != []:
@@ -140,11 +167,14 @@ def add():
     newDrink = False
     addDrink = addDrinkForm()
     if addDrink.submit1.data and addDrink.validate_on_submit():
-        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=addDrink.drinkImage.data, instructions=addDrink.drinkInstructions.data)
+        res = generateImage(addDrink.drinkName.data + "cocktail")
+
+        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=res["data"][0]["url"], instructions=addDrink.drinkInstructions.data)
         drink.insert()
         addedDrink = True
         newDrink = Drinks.get_by_name(addDrink.drinkName.data)
-        
+        return redirect(url_for('index.drink', did= newDrink[0].did))
+
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True
@@ -157,6 +187,39 @@ def add():
 
 @bp.route('/drink/<did>', methods=['GET', 'POST'])
 def drink(did):
+
+    authenticated = False
+    current_uid = -1
+
+    voted = False
+
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+    
+    # add to reviews
+    addReview = addReviewForm()
+    if authenticated and addReview.validate():
+        now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+        print("cart")
+        cart = Ratings(uid=current_uid, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
+        cart.insert()
+
+    #upvote/downvote functionality
+    
+    if request.method == 'POST':
+        if voted == False:
+            if request.form.get("upvote"):
+                did_in = request.form.get('did_out')
+                uid_in = request.form.get('uid_out')
+                Ratings.upvote(uid_in, did_in)
+                voted = True
+            if request.form.get("downvote"):
+                did_in = request.form.get('did_out')
+                uid_in = request.form.get('uid_out')
+                Ratings.downvote(uid_in, did_in)
+                voted = True
+
     drink = Drinks.get_by_did(did)
     ingredients = Components.get_by_did(did)
     avg_rating = Ratings.get_avg_rating(did)
@@ -165,10 +228,17 @@ def drink(did):
     edit = False
     if author:
         author = author.uid
-    if author == current_user.uid:
-        edit = True
+        if current_user.is_authenticated:
+            if author == current_user.uid:
+                edit = True
 
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, edit=edit)
+    
+    editDrink = editDrinkForm()
+    if editDrink.validate_on_submit():
+        drink.update(editDrink.drinkInstructions.data)
+
+    drink = Drinks.get_by_did(did)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
     <h1>{{ drink.name }}</h1>
     {% if ratings %}
     <p>{{avg[0][0]}} &#9733</p>
@@ -7,7 +8,8 @@
     <p><b>Category: </b>{{ drink.category }}</p>
 
     <img class="drink-picture" src="{{ drink.picture }}" alt="{{ drink.name }}">
-    
+    <br></br>
+
     <p><b>Ingredients:</b></p>
     <ul>
         {% for ingredient in ingredients %}
@@ -16,10 +18,6 @@
     </ul>
     <p><b>Instructions:</b></p>
     <p>{{ drink.instructions }}</p>
-
-    {% if edit %}
-    <p><b> Edit Drink: </b></p>
-    {% endif %}
 
     {% if ratings %}
     <p><b>Recent Rating History:</b></p>
@@ -32,6 +30,8 @@
         <th scope="col">Review</th>
         <th scope="col">Likes</th>
         <th scope="col">Dislikes</th>
+        <th scope="col">Upvote Rating</th>
+        <th scope="col">Downvote Rating</th>
         </tr>
     </thead>
     <tbody>
@@ -43,11 +43,63 @@
             <td>{{rating.descript}}</td>
             <td>{{rating.likes}}</td>
             <td>{{rating.dislikes}}</td>
+            <td>
+              <form method="POST" action="/drink/{{rating.did}}">
+                <input type="submit" value="Upvote this Review" name="upvote" size="1">
+                <input type="hidden" value="{{rating.did}}" name="did_out">
+                <input type="hidden" value="{{rating.uid}}" name="uid_out">
+              </form>
+            </td>
+            <td>
+              <form method="POST" action="/drink/{{rating.did}}">
+                <input type="submit" value="Downvote this Review" name="downvote" size="1">
+                <input type="hidden" value="{{rating.did}}" name="did_out">
+                <input type="hidden" value="{{rating.uid}}" name="uid_out">
+              </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
     </table>
     {% endif %}
 
+    {% if edit %}
+    <br />
+    <br />
+    <br />
+    <h2> <b>Edit Your Drink Properties:</b> </h2>
+    <form action="" method="post" novalidate>
+      {{ editDrink.hidden_tag() }}
+    <p>
+      {{ editDrink.drinkInstructions.label }}<br />
+      {{ editDrink.drinkInstructions(size=32, value=drink.instructions) }}<br />
+      {% for error in editDrink.drinkInstructions.errors %}<br />
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    
+    {{ editDrink.submit_edit(class_="btn btn-black") }}
+
+    {% else %}
+    <br />
+    <h2><b>Review Drink:</b></h2>
+    <form action="" method="post" novalidate>
+      {{ addReview.hidden_tag() }}
+      <p>
+        {{ addReview.score.label }}<br/>
+        {{ addReview.score(size=32) }}<br/>
+        {% for error in addReview.score.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ addReview.descript.label }}<br/>
+        {{ addReview.descript(size=32) }}<br/>
+        {% for error in addReview.descript.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      {{ addReview.submit5(class_="btn btn-black") }}
+    {% endif %}
 {% endblock %}
 

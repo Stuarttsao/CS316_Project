@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2><b>Edit Review:</b></h2>
+<form action="" method="post" novalidate>
+  {{ editReview.hidden_tag() }}
+  <p>
+    {{ editReview.score2.label }}<br/>
+    {{ editReview.score2(size=32) }}<br/>
+    {% for error in editReview.score2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ editReview.descript2.label }}<br/>
+    {{ editReview.descript2(size=32) }}<br/>
+    {% for error in editReview.descript2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  {{ editReview.submit7(class_="btn btn-black") }}
+</form>
+{% endblock %}

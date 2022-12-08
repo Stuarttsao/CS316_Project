@@ -112,6 +112,11 @@ class getAvgRatingForm(FlaskForm):
     drinkID4 = StringField('Drink ID', validators=[DataRequired()])
     submit6 = SubmitField('Search')
 
+class editReviewForm(FlaskForm):
+    score2 = StringField('Score', validators=[DataRequired()])
+    descript2 = StringField('Description', validators=[DataRequired()])
+    submit7 = SubmitField('Edit Review')
+
 @bp.route('/', methods=['GET', 'POST'])
 def home():
     form = SearchForm()
@@ -318,9 +323,28 @@ def ratings():
         ratings = Ratings.get(current_uid)
         if ratings:
             for rating in ratings:
-                name = Drinks.get_by_did(rating.did).name
+                name = Drinks.get_by_did(rating.did)[0].name
                 ratings_new.append((name, rating))
     return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings_new)
+
+@bp.route('/editratings/<uid>/<did>', methods=['GET', 'POST'])
+def ratingEdit(uid, did):
+    print("did: ", did)
+    authenticated = False
+    current_uid = -1
+
+    if current_user.is_authenticated:
+        current_uid = current_user.uid
+        authenticated = True
+    
+    # edit review
+    editReview = editReviewForm()
+    if authenticated and editReview.validate_on_submit():
+        now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+        print("cart")
+        Ratings.updateRating(uid=current_uid, did=did, score=editReview.score2.data, descript=editReview.descript2.data)
+
+    return render_template('editrating.html', editReview=editReview)
 
 @bp.route('/menus/<uid>/<menuName>/<summary>/<date>', methods=['GET', 'POST'])
 def menu(uid, menuName, summary, date):

@@ -28,8 +28,7 @@
         <td>{{rating[1].likes}}</td>
         <td>{{rating[1].dislikes}}</td>
         <td>
-          <form method="POST" action="/ratings">
-            <input type="submit" value="Edit {{rating[0]}}" name="editRating" size="1">
+          <a class="btn btn-secondary" href="{{ url_for('index.ratingEdit',uid=rating[1].uid, did=rating[1].did) }}" role="button">Edit Review</a>
           </form>
         </td>
         <td>

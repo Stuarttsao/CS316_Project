@@ -19,7 +19,7 @@
     <p><b>Ingredients:</b></p>
     <ul>
         {% for ingredient in ingredients %}
-            <li>{{ ingredient.name }}</li>
+            <li>{{ ingredient.amount}} {{ingredient.unit}} {{ ingredient.name }}</li>
         {% endfor %}
     </ul>
     <p><b>Instructions:</b></p>

@@ -3,53 +3,21 @@
 {% block content %}
 
 <!-- HTML Page with search bar and search button -->
-<h1>Search by ingredient</h1>
-<form action="" method="post" novalidate>
-  {{ form.hidden_tag() }}
-  <p>
-    {{ form.search.label }}<br/>
-    {{ form.search(size=32) }}<br/>
-    {% for error in form.search.errors %}
-    <span style="color: red;">[{{ error }}]</span>
+<h1>Explore Drinks</h1>
+<!--     {% for cocktail in top_cocktails %}
+    <li>{{ cocktail.name }}</li>
+    {% endfor %} -->
+    {% for cat in categories %}
+    <h2><a href="{{ url_for('index.explore', list_name = cat[0].split('/')[0]) }}">Most Popular {{ cat[0]}}</a></h2><br>
     {% endfor %}
-  </p>
-  {{ form.submit(class_="btn btn-black") }}
 
-<!-- list of drinks returned from search -->
 
-{% if drinks %}
-<h2>Drinks</h2>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Drink Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for drink in drinks %}
-    <tr>
-      <td>
-      <details>
-        <summary>{{drink.name}}</summary>
-        <div class="content">
 
-          <p>
-            <b>Category: </b> {{drink.category}}
-          </p>
-          <p>
-            <b>Instructions: </b> {{drink.instructions}}
-          </p>
-        <br>
-          <img class = "drink-picture" src = {{drink.picture}}>
-        </div>
-      </details>
-    </td>
-    </tr>
-     
-      
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+
+
+
+
+
+
 
 {% endblock %}

@@ -118,3 +118,10 @@ LIMIT 5
         app.db.execute(''' UPDATE Ratings Set likes = likes + 1 WHERE likes >= 0 AND uid = :uid AND did = :did''',
                         uid = uid,
                         did = did)
+
+    def updateRating(uid, did, score, descript):
+        app.db.execute(''' UPDATE Ratings Set score = :score, descript = :descript WHERE uid = :uid AND did = :did''',
+                        uid = uid,
+                        did = did,
+                        score = score,
+                        descript = descript)

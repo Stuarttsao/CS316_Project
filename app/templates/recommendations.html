@@ -2,25 +2,14 @@
 
 {% block content %}
 
-<!-- HTML Page with search bar and search button -->
 {% if error %}
 <h1 style="color:red"> Custom Category Not Supported! </h1>
 {% endif %}
 <h1>Explore Drinks</h1>
-<!--     {% for cocktail in top_cocktails %}
-    <li>{{ cocktail.name }}</li>
-    {% endfor %} -->
+
+    <h2><a href="{{ url_for('index.explore', list_name = 'drinks') }}">Most Popular Drinks</a></h2><br>
     {% for cat in categories %}
     <h2><a href="{{ url_for('index.explore', list_name = cat[0].split('/')[0]) }}">Most Popular {{ cat[0]}}</a></h2><br>
     {% endfor %}
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

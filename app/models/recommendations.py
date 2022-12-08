@@ -45,22 +45,23 @@ LIMIT 5
       
         return [Recommendations(*(row)) for row in rows]
 
-
-
     #get all time top drinks
     @staticmethod
     def get_top_drinks():
         rows = app.db.execute('''
-SELECT did, name, category, instructions, picture
-FROM Drinks
-WHERE did = :did
+SELECT D.did, D.name, D.category, D.picture, (SELECT round(avg(R1.score), 1) FROM Ratings R1 WHERE R1.did = D.did LIMIT 5) as score
+FROM Drinks D
+WHERE (SELECT round(avg(R1.score), 1) FROM Ratings R1 WHERE R1.did = D.did LIMIT 5) <> 0
+ORDER BY score DESC
+LIMIT 10
 ''',
-                              did=did)
-        return Recommendations(*(rows[0])) if rows else None
+                             )
+        return [Recommendations(*row) for row in rows]
 
     @staticmethod
     def get_top_drinks_in_category(category):
         rows = app.db.execute('''
+
 SELECT D.did, D.name, D.category, D.picture, ROUND(AVG(R.score), 1) as score
 From Drinks D, Ratings R
 WHERE D.category = :category AND D.did = R.did

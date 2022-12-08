@@ -3,6 +3,9 @@
 {% block content %}
 
 <!-- HTML Page with search bar and search button -->
+{% if error %}
+<h1 style="color:red"> Custom Category Not Supported! </h1>
+{% endif %}
 <h1>Explore Drinks</h1>
 <!--     {% for cocktail in top_cocktails %}
     <li>{{ cocktail.name }}</li>

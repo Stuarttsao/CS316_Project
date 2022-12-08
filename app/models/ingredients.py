@@ -26,5 +26,5 @@ WHERE name = :name
                                 name=name)
         return [Ingredients(*row) for row in rows]
 
-
+    
         

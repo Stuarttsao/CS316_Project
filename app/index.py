@@ -29,7 +29,7 @@ from flask import Blueprint
 bp = Blueprint('index', __name__)
 
 import openai
-secret = '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'
+secret = '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'
 
 def generateImage(text):
     openai.api_key = secret
@@ -41,6 +41,7 @@ def generateImage(text):
     return response
 
 
+ingredients2 = []
 
 
 
@@ -105,7 +106,7 @@ class addReviewForm(FlaskForm):
     descript = StringField('Description', validators=[DataRequired()])
     #likes = StringField('Likes', validators=[DataRequired()])
     #dislikes = StringField('Dislikes', validators=[DataRequired()])
-    submit5 = SubmitField('Add to Cart')
+    submit5 = SubmitField('Add Review')
 
 class getAvgRatingForm(FlaskForm):
     drinkID4 = StringField('Drink ID', validators=[DataRequired()])
@@ -145,50 +146,98 @@ def user_profile(uid):
     ratings = Ratings.get_most_recent(uid)
     barcart = BarCart.get_most_made(uid)
     disp_bar = []
-    for drink in barcart:
-        thisDrink = Drinks.get_by_did(drink.did)
-        disp_bar.append((thisDrink.name, drink))
+    if barcart:
+        for drink in barcart:
+            thisDrink = Drinks.get_by_did(drink.did)[0]
+            disp_bar.append((thisDrink.name, drink))
     user_drinks = Bartender.get_all(uid)
     disp_drinks = []
-    for drink in user_drinks:
-        thisDrink = Drinks.get_by_did(drink.did)
-        disp_drinks.append((thisDrink.name, drink))
+    if user_drinks:
+        for drink in user_drinks:
+            thisDrink = Drinks.get_by_did(drink.did)[0]
+            disp_drinks.append((thisDrink.name, drink))
     authenticated = False
     if current_user.is_authenticated:
         authenticated = True
-    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=user, barcart=disp_bar, drinks=disp_drinks)
+
+    times_made = BarCart.get_count(uid)
+    drinks_invented = Bartender.get_count(uid)
+    return render_template('user_profile.html', title='Profile', menus=menus, ratings=ratings, auth=authenticated, user=user, barcart=disp_bar, drinks=disp_drinks, times_made=times_made, drinks_invented=drinks_invented)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
 def add():
 
+
         # add drinks to database
+    form2 = SearchForm()
+    ingredients = ingredients2
+
+    addedIngredients = []
+
     drink = 0
     addedDrink = False
     newDrink = False
     addDrink = addDrinkForm()
-    if addDrink.submit1.data and addDrink.validate_on_submit():
-        res = generateImage(addDrink.drinkName.data + "cocktail")
+    authenticated = False
 
-        drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=res["data"][0]["url"], instructions=addDrink.drinkInstructions.data)
+
+    if addDrink.submit1.data:
+        print("in add")
+
+        try:
+            res = generateImage(addDrink.drinkName.data + "cocktail")
+            drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture=res["data"][0]["url"], instructions=addDrink.drinkInstructions.data)
+        except: 
+            drink = Drinks(did= 1000, name=addDrink.drinkName.data, category=addDrink.drinkCategory.data, picture="na", instructions=addDrink.drinkInstructions.data)
+
+        
         drink.insert()
+
         addedDrink = True
         newDrink = Drinks.get_by_name(addDrink.drinkName.data)
+        print("new drink:")
+        print(newDrink[0].did)
+        
+        # print("ingredients:", ingredients[0])
+        for ing in ingredients2:
+            print("added", ing.name)
+            print(newDrink[0].did)
+
+            temp = Components(newDrink[0].did, ing.iid, 1, 1)
+            temp.insert()
+
+        ingredients2.clear()
+
+        if current_user.is_authenticated:
+            authenticated = True
+            if addedDrink:
+                author = Bartender(uid=current_user.uid, did=newDrink[0].did)
+                author.insert()
+
         return redirect(url_for('index.drink', did= newDrink[0].did))
 
-    authenticated = False
+    if form2.submit.data and form2.validate_on_submit():   
+        print("in 1")
+        ing2 = Ingredients.get_by_name(form2.search.data)
+        if ing2:
+            print(ing2[0].name)
+            print(ing2[0].iid)
+
+            ingredients2.append(ing2[0])
+    
     if current_user.is_authenticated:
         authenticated = True
         if addedDrink:
             author = Bartender(uid=current_user.uid, did=newDrink[0].did)
             author.insert()
-   
-    return render_template('drinks.html', title='Add Drink', addDrink=addDrink, drink=drink, auth=authenticated)
+
+    return render_template('drinks.html', title='Add Drink', addDrink=addDrink, drink=drink, auth=authenticated, form2 = form2, ingredients=ingredients, addedIngredients=addedIngredients)
 
 # individual drink pages
 @bp.route('/drink/<did>', methods=['GET', 'POST'])
 def drink(did):
-
+    print("did: ", did)
     authenticated = False
     current_uid = -1
 
@@ -200,7 +249,7 @@ def drink(did):
     
     # add to reviews
     addReview = addReviewForm()
-    if authenticated and addReview.validate():
+    if authenticated and addReview.validate_on_submit():
         now_time = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         print("cart")
         cart = Ratings(uid=current_uid, did=did, time_rated=now_time, score=addReview.score.data, descript=addReview.descript.data, likes=0, dislikes=0)
@@ -220,8 +269,8 @@ def drink(did):
                 uid_in = request.form.get('uid_out')
                 Ratings.downvote(uid_in, did_in)
                 voted = True
-
-    drink = Drinks.get_by_did(did)
+    
+    print("did: ", did)
     ingredients = Components.get_by_did(did)
     avg_rating = Ratings.get_avg_rating(did)
     ratings = Ratings.get_by_drink(did)
@@ -236,14 +285,13 @@ def drink(did):
         if current_user.is_authenticated:
             if author == current_user.uid:
                 edit = True
-
     
     editDrink = editDrinkForm()
     if editDrink.validate_on_submit():
         drink.update(editDrink.drinkInstructions.data)
 
-    drink = Drinks.get_by_did(did)
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit, recommendations=recommendations)
+    drink = Drinks.get_by_did(did)[0]
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit, author=author, recommendations=recommendations)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):
@@ -254,23 +302,24 @@ def drink(did):
 def ratings():
     authenticated = False
     current_uid = -1
+    ratings_new = []
     if current_user.is_authenticated:
         current_uid = current_user.uid
         authenticated = True
-    if request.method == 'POST':
-        if request.form.get("deleteRating"):
-            name = request.form.get('deleteRating')[7:]
-            name = Drinks.get_by_name(name).did
-            Ratings.remove_all_by_uid_did(current_uid, name)
-        if request.form.get("editRating"):
-            name = request.form.get('editRating')[5:]
-            # add edit functionality here
-    ratings = Ratings.get(current_uid)
-    ratings_new = []
-    for rating in ratings:
-        name = Drinks.get_by_did(rating.did).name
-        ratings_new.append((name, rating))
-    return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings)
+        if request.method == 'POST':
+            if request.form.get("deleteRating"):
+                name = request.form.get('deleteRating')[7:]
+                name = Drinks.get_by_name(name)[0].did
+                Ratings.remove_all_by_uid_did(current_uid, name)
+            if request.form.get("editRating"):
+                name = request.form.get('editRating')[5:]
+                # add edit functionality here
+        ratings = Ratings.get(current_uid)
+        if ratings:
+            for rating in ratings:
+                name = Drinks.get_by_did(rating.did).name
+                ratings_new.append((name, rating))
+    return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings_new)
 
 @bp.route('/menus/<uid>/<menuName>/<summary>/<date>', methods=['GET', 'POST'])
 def menu(uid, menuName, summary, date):
@@ -292,7 +341,7 @@ def menu(uid, menuName, summary, date):
             drinks = []
             dids = Menus.get_menudrinks(uid, menuName)
             for did in dids:
-                drink = Drinks.get_by_did(did)
+                drink = Drinks.get_by_did(did)[0]
                 drinks.append(drink)
                 print(drinks)
         else:
@@ -412,7 +461,7 @@ def barCart():
         my_drinks_barcart = BarCart.get_drinks_in_cart(current_uid)
         if my_drinks_barcart:
             for barcart in my_drinks_barcart:
-                drinkName = Drinks.get_by_did(barcart.did).name
+                drinkName = Drinks.get_by_did(barcart.did)[0].name
                 my_drinks.append((drinkName, barcart))
             print(my_drinks)
 

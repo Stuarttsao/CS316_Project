@@ -24,7 +24,7 @@ FROM Ratings
 WHERE uid = :uid
 ''',
                               uid=uid)
-        return Ratings(*rows) if rows else None
+        return [Ratings(*row) for row in rows]
 
     @staticmethod
     def get_most_recent(uid):
@@ -94,15 +94,18 @@ LIMIT 5
                         did = did)  
 
     def insert(self):
-        app.db.execute(''' INSERT INTO Ratings (uid, did, time_rated, score, descript, likes, dislikes)
-                            VALUES (:uid, :did, :time_rated, :score, :descript, :likes, :dislikes) ''',
-                            uid=self.uid,
-                            did=self.did,
-                            time_rated=self.time_rated,
-                            score=self.score,
-                            descript=self.descript,
-                            likes=self.likes,
-                            dislikes=self.dislikes)
+        try:
+            app.db.execute(''' INSERT INTO Ratings (uid, did, time_rated, score, descript, likes, dislikes)
+                                VALUES (:uid, :did, :time_rated, :score, :descript, :likes, :dislikes) ''',
+                                uid=self.uid,
+                                did=self.did,
+                                time_rated=self.time_rated,
+                                score=self.score,
+                                descript=self.descript,
+                                likes=self.likes,
+                                dislikes=self.dislikes)
+        except:
+            return False
 
     @staticmethod
     def downvote(uid, did):

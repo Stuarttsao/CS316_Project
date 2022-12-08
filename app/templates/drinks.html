@@ -5,6 +5,31 @@
   <!-- form to add drink to database -->
 
     <h2>Add Drink</h2>
+
+    <form action="" method="post" novalidate>
+      {{ form2.hidden_tag() }}
+      <p>
+        {{ form2.search.label }}<br/>
+        {{ form2.search(size=32) }}<br/>
+        {% for error in form2.search.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      {{ form2.submit(class_="btn btn-black") }}
+    
+      <!-- list of ingredients returned from search -->
+      {% if ingredients %}
+      <div>
+          {% for ingredient in ingredients %}
+            <span class="b">
+              <text class="text">{{ingredient.name}}</text>
+            </span>
+          {% endfor %}
+      </div>
+      {% endif %}
+    
+
+
     <form action="" method="post" novalidate>
       {{ addDrink.hidden_tag() }}
       <p>
@@ -28,13 +53,6 @@
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
       </p>
-      <p>
-        {{ addDrink.drinkImage.label }}<br />
-        {{ addDrink.drinkImage(size=32) }}<br />
-        {% for error in addDrink.drinkImage.errors %}<br />
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %} 
-      </p>
       {{ addDrink.submit1(class_="btn btn-black") }}
 
       {% if drink %}
@@ -47,36 +65,5 @@
   </div>
 
 </div>
-
-<!-- search by ingredients -->
-
-{% block scripts %}
-<script>
-  var search_terms = ['apple', 'apple watch', 'apple macbook', 'apple macbook pro', 'iphone', 'iphone 12'];
-
-  function autocompleteMatch(input) {
-    if (input == '') {
-      return [];
-    }
-    var reg = new RegExp(input)
-    return search_terms.filter(function (term) {
-      if (term.match(reg)) {
-        return term;
-      }
-    });
-  }
-
-  function showResults(val) {
-    res = document.getElementById("result");
-    res.innerHTML = '';
-    let list = '';
-    let terms = autocompleteMatch(val);
-    for (i = 0; i < terms.length; i++) {
-      list += '<li>' + terms[i] + '</li>';
-    }
-    res.innerHTML = '<ul>' + list + '</ul>';
-  }
-</script>
-{% endblock %}
 
 {% endblock %}

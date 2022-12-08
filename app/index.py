@@ -478,18 +478,22 @@ def recommend():
 @bp.route('/recommendations/<list_name>', methods=['GET', 'POST'])
 def explore(list_name):
     categories = {'Cocoa': 'Cocoa',
-'Coffee': 'Coffee / Tea',
+'Coffee ': 'Coffee / Tea',
 'Cocktail': 'Cocktail',
 'Homemade Liqueur': 'Homemade Liqueur',
-'Milk': 'Milk / Float / Shake',
+'Milk ': 'Milk / Float / Shake',
 'Shot': 'Shot',
 'Beer': 'Beer',
 'Ordinary Drink':'Ordinary Drink',
-'Soft Drink': 'Soft Drink / Soda',
+'Soft Drink ': 'Soft Drink / Soda',
 'Other': 'Other/Unknown',
 'Punch ': 'Punch / Party Drink'}
-    if list_name == 'drinks':
-        results = Recommendations.get_top_drinks()
-    else:
-        results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
+
+    error = False
+    if list_name not in categories:
+        error = True
+        return render_template('recommendations.html', title='Explore', categories=Recommendations.get_unique_categories(), error=error)
+
+    results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
+
     return render_template('topdrinklist.html', title='list_name', results=results, list_name=list_name)

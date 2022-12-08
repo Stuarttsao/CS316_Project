@@ -61,13 +61,13 @@ LIMIT 10
     @staticmethod
     def get_top_drinks_in_category(category):
         rows = app.db.execute('''
-SELECT D.did, D.name, D.category, D.picture, (SELECT round(avg(R1.score), 1) FROM Ratings R1 WHERE R1.did = D.did LIMIT 5) as score
-FROM Drinks D
-WHERE D.category = :category AND (SELECT round(avg(R1.score), 1) FROM Ratings R1 WHERE R1.did = D.did LIMIT 5) <> 0
+
+SELECT D.did, D.name, D.category, D.picture, ROUND(AVG(R.score), 1) as score
+From Drinks D, Ratings R
+WHERE D.category = :category AND D.did = R.did
+GROUP BY D.did
 ORDER BY score DESC
 LIMIT 10
 ''',
                               category=category)
         return [Recommendations(*row) for row in rows]
-
-

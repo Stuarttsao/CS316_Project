@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% if error %}
+<h1 style="color:red"> Custom Category Not Supported! </h1>
+{% endif %}
 <h1>Explore Drinks</h1>
 
     <h2><a href="{{ url_for('index.explore', list_name = 'drinks') }}">Most Popular Drinks</a></h2><br>

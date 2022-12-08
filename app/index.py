@@ -119,7 +119,7 @@ def home():
     ingredients = []
 
     if form.submit.data and form.validate_on_submit():
-        checked = request.form.get('seachTerm') 
+        checked = request.form.get('searchTerm') 
         print(checked)
         if checked == "drink":
             drinks = Drinks.get_by_name(form.search.data) 
@@ -469,7 +469,7 @@ def barCart():
 
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():
-    #form = SearchForm()
+
     categories = Recommendations.get_unique_categories()
     
     return render_template('recommendations.html', title='Explore', categories=categories)
@@ -488,6 +488,8 @@ def explore(list_name):
 'Soft Drink': 'Soft Drink / Soda',
 'Other': 'Other/Unknown',
 'Punch ': 'Punch / Party Drink'}
-    
-    results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
+    if list_name == 'drinks':
+        results = Recommendations.get_top_drinks()
+    else:
+        results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
     return render_template('topdrinklist.html', title='list_name', results=results, list_name=list_name)

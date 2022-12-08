@@ -5,7 +5,7 @@
 <!-- HTML Page with search bar and search button -->
 
 <!-- <h1>Current user: {{uid}}</h1> -->
-
+{% if user %}
 <h1>What do you have in your fridge?</h1>
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
@@ -76,7 +76,36 @@
 
 {% endif %}
 
+{% if suggestions %}
+<h2> Add These Ingredients To Your Cart! </h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Ingredient Name</th>
+      <th scope="col">Number of Other Cocktails</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for suggest in suggestions %}
+      <tr>
+        <td>{{suggest.name}}</td>
+        <td>{{suggest.countOther}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
 
+<h4> No Menus Created </h4>
+
+{% endif %}
+
+{% else %}
+<h1> You are not logged in! </h1>
+<h3> Please <strong>Log In</strong> to view your drink history or <strong>Register</strong> to begin your Mini-Cocktail DB Adventure! </h3>
+<a class="btn btn-secondary" href="{{ url_for('users.login') }}" role="button">Log in</a>
+<a class="btn btn-secondary" href="{{ url_for('users.register') }}" role="button">Register</a>
+{% endif %}
 <!-- <h1>Clear User Cart: Enter User ID</h1> -->
 
   <!-- {{ deleteCart.hidden_tag() }} -->

@@ -73,12 +73,15 @@ WHERE uid = :uid AND ingredientCart.iid = ingredients.iid
 
 
     def insert(self):
-        app.db.execute(''' INSERT INTO ingredientCart (uid, iid, amount, unit)
-                            VALUES (:uid, :iid, :amount, :unit) ''',
-                            uid=self.uid,
-                            iid=self.iid,
-                            amount=self.amount,
-                            unit=self.unit)
+        try:
+            app.db.execute(''' INSERT INTO ingredientCart (uid, iid, amount, unit)
+                                VALUES (:uid, :iid, :amount, :unit) ''',
+                                uid=self.uid,
+                                iid=self.iid,
+                                amount=self.amount,
+                                unit=self.unit)
+        except:
+            return False
 
 
 

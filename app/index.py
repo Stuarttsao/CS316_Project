@@ -285,13 +285,14 @@ def drink(did):
         if current_user.is_authenticated:
             if author == current_user.uid:
                 edit = True
-    
+    drink = Drinks.get_by_did(did)[0]
+
     editDrink = editDrinkForm()
     if editDrink.validate_on_submit():
         drink.update(editDrink.drinkInstructions.data)
 
     drink = Drinks.get_by_did(did)[0]
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit, author=author, recommendations=recommendations)
+    return render_template('drink.html', title='Drink', drink=drink, authenticated=authenticated, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit, author=author, recommendations=recommendations)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):
@@ -423,11 +424,6 @@ def cartIndex():
             ingredients = Ingredients.get_by_name(form.search.data)
             print(ingredients)
 
-
-
-
-
-
         if request.form.get('makable') == 'Search':       
             iidList = []
             for i in localCart:
@@ -437,8 +433,11 @@ def cartIndex():
             makable = IngredientCart.search_by_cart(iidList)
             print(makable)
 
+    authenticated = False
+    if current_user.is_authenticated:
+        authenticated = True
     return render_template('cart.html', title='IngredientCart',
-    form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredients, localCart = localCart, makable = makable)
+    form=form, addCart = addCart ,deleteCart = deleteCart,ingredients=ingredients, localCart = localCart, makable = makable, user=authenticated)
 
 
 

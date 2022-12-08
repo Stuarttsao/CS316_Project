@@ -126,4 +126,9 @@
       </p>
       {{ addReview.submit5(class_="btn btn-black") }}
     {% endif %}
+
+    {% if authenticated %}
+    <p> Would you like to add this drink to an existing menu or new menu? </p>
+    <a class="btn btn-secondary" href="/menus" role="button">Menus</a>
+    {% endif %}
 {% endblock %}

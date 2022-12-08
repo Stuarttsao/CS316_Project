@@ -36,9 +36,11 @@ WHERE Drinks.did = :did
     def you_may_also_like(did):
         category = Recommendations.get_category(did)['category']
         rows = app.db.execute('''
-SELECT Drinks.did, Drinks.name, Drinks.category, Drinks.picture, (SELECT round(avg(R1.score), 1) FROM Ratings R1 WHERE R1.did = Drinks.did LIMIT 5) as score
-FROM Drinks
-WHERE Drinks.category = :category AND Drinks.did != :did 
+SELECT Drinks.did, Drinks.name, Drinks.category, Drinks.picture, ROUND(AVG(R.score), 1) as score
+FROM Drinks, Ratings R
+WHERE Drinks.category = :category AND Drinks.did != :did  AND Drinks.did = R.did AND score >= 3
+GROUP BY Drinks.did
+ORDER BY score
 LIMIT 5
 ''',
                               did=did, category=category)

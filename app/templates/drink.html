@@ -2,6 +2,12 @@
 {% block content %}
 
     <h1>{{ drink.name }}</h1>
+    {% if author %}
+    <td>Created by <a href="{{ url_for('index.user_profile', uid = author) }}">User #{{ author }}</a></td>
+    {% endif %}
+    <br />
+    <br />
+
     {% if ratings %}
     <p>{{avg[0][0]}} &#9733</p>
     {% endif %}

@@ -35,6 +35,16 @@ class Bartender:
         ''', uid=uid)
         return [Bartender(*row) for row in rows]
 
+    @staticmethod
+    def get_count(uid):
+        rows = app.db.execute('''
+        SELECT COUNT(did)
+        FROM Bartender
+        WHERE uid = :uid
+        ''', uid=uid)
+        return rows[0][0] if rows[0][0] else 0
+
+
     def save(self):
         if self.did:
             self.update()

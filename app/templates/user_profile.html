@@ -5,13 +5,16 @@
 {% if user %}
 <div>
   <td> User #{{user.uid}} </td>
-  <p> {{user.firstname}} {{user.lastname}}</p>
-  <p> {{user.email}} </p>
+  <td> {{user.email}} </td>
+  <h1> {{user.firstname}} {{user.lastname}}</h1>
+  <p> {{user.firstname}} has made {{times_made}} drinks</p>
+  <p> {{user.firstname}} has invented {{drinks_invented}} drinks</p>
+
 </div>
 
 <br>
 {% if menus %}
-<h2> Menus</h2>
+<h2> Recently Created Menus</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
@@ -30,16 +33,15 @@
     {% endfor %}
   </tbody>
 </table>
-<h4> View All Your Menus <a class="btn btn-secondary" href="{{ url_for('index.menus') }}" role="button" style="height:10px;width:100px;font-size:15px">Menus</a></h4>
 {% else %}
 
-<h4> No menus created </h4>
+<h4> No Menus Created </h4>
 
 {% endif %}
 
 
 {% if ratings %}
-<h2> Ratings</h2>
+<h2> Recent Drink Ratings </h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
@@ -64,8 +66,6 @@
     {% endfor %}
   </tbody>
 </table>
-<h4> View Your Rating History <a class="btn btn-secondary" href="{{ url_for('index.ratings') }}" role="button" style="height:10px;width:100px;font-size:15px">Ratings</a></h4>
-
 
 {% else %}
 
@@ -75,7 +75,7 @@
 
 
 {% if barcart %}
-<h2>Drinks In BarCart</h2>
+<h2>Favorite Drinks in Bar Cart</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
@@ -92,7 +92,6 @@
     {% endfor %}
   </tbody>
 </table>
-<h4> View Your Full BarCart <a class="btn btn-secondary" href="{{ url_for('index.barCart') }}" role="button" style="height:10px;width:100px;font-size:15px">BarCart</a></h4>
 {% else %}
 
 <h4> No Drinks In BarCart </h4>

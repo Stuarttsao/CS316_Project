@@ -34,6 +34,15 @@ class BarCart:
                               uid=uid)
         return [BarCart(*row) for row in rows] if rows else None
 
+    @staticmethod
+    def get_count(uid):
+        rows = app.db.execute('''
+        SELECT SUM(times_made)
+        FROM barCart
+        WHERE uid = :uid
+        ''', uid=uid)
+        return rows[0][0] if rows[0][0] else 0
+
     def update(self, times_made):
         app.db.execute(''' UPDATE barCart SET uid = :uid, did = :did, times_made = times_made + :times_made WHERE did = :did ''', uid=self.uid, did=self.did, times_made=times_made)
 

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HTML Page with search bar and search button -->
+<h1> Most Popular {{ list_name }} </h1>
+   
+    <div class="gallery-container">
+        {% for rec in results %}
+          <div class="gallery-child">
+            <a href="{{ url_for('index.drink', did = rec.did) }}">
+              <h2>{{ rec.name }}</h2>
+            </a>
+       
+            <a href="{{ url_for('index.drink', did = rec.did) }}"><img class="drink-picture" src="{{ rec.picture }}" alt="{{ rec.name }}"></a>
+
+          </div>
+        {% endfor %}
+    </div>
+{% endblock %}

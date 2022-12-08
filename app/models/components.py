@@ -14,6 +14,13 @@ class Components:
         return rows
 
     @staticmethod
+    def get_ingredients(did):
+        rows = app.db.execute(''' SELECT DISTINCT did, components.iid, amount, unit, ingredients.name 
+        FROM components, ingredients WHERE did = :did AND components.iid = ingredients.iid''', did=did)
+        print("rows", rows)
+        return rows
+
+    @staticmethod
     def get_by_iid(iid):
         rows = app.db.execute(''' SELECT did, iid, amount, unit FROM components WHERE iid = :iid ''', iid=iid)
         return [Components(*row) for row in rows]

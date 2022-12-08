@@ -22,6 +22,7 @@ from .models.ingredients import Ingredients
 from .models.bartender import Bartender
 from .models.barcart import BarCart
 from .models.components import Components
+from .models.recommendations import Recommendations
 
 
 from flask import Blueprint
@@ -184,7 +185,7 @@ def add():
    
     return render_template('drinks.html', title='Add Drink', addDrink=addDrink, drink=drink, auth=authenticated)
 
-
+# individual drink pages
 @bp.route('/drink/<did>', methods=['GET', 'POST'])
 def drink(did):
 
@@ -225,6 +226,10 @@ def drink(did):
     avg_rating = Ratings.get_avg_rating(did)
     ratings = Ratings.get_by_drink(did)
     author = Bartender.get_by_did(did)
+
+
+    recommendations = Recommendations.you_may_also_like(did)
+    
     edit = False
     if author:
         author = author.uid
@@ -238,7 +243,7 @@ def drink(did):
         drink.update(editDrink.drinkInstructions.data)
 
     drink = Drinks.get_by_did(did)
-    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit)
+    return render_template('drink.html', title='Drink', drink=drink, ingredients=ingredients, avg=avg_rating, ratings=ratings, editDrink=editDrink, addReview=addReview, edit=edit, recommendations=recommendations)
 
 # @bp.route('/addToCart/<iid>', methods=['GET', 'POST'])
 # def addToCart(iid):
@@ -416,8 +421,24 @@ def barCart():
 @bp.route('/recommendations', methods=['GET', 'POST'])
 def recommend():
     #form = SearchForm()
-    drink = []
+    categories = Recommendations.get_unique_categories()
     
+    return render_template('recommendations.html', title='Explore', categories=categories)
 
-    return render_template('recommendations.html')
-
+# individual explore pages
+@bp.route('/recommendations/<list_name>', methods=['GET', 'POST'])
+def explore(list_name):
+    categories = {'Cocoa': 'Cocoa',
+'Coffee': 'Coffee / Tea',
+'Cocktail': 'Cocktail',
+'Homemade Liqueur': 'Homemade Liqueur',
+'Milk': 'Milk / Float / Shake',
+'Shot': 'Shot',
+'Beer': 'Beer',
+'Ordinary Drink':'Ordinary Drink',
+'Soft Drink': 'Soft Drink / Soda',
+'Other': 'Other/Unknown',
+'Punch ': 'Punch / Party Drink'}
+    
+    results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
+    return render_template('topdrinklist.html', title='list_name', results=results, list_name=list_name)

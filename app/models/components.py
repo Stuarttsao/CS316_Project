@@ -9,7 +9,7 @@ class Components:
 
     @staticmethod
     def get_by_did(did):
-        rows = app.db.execute(''' SELECT did, components.iid, amount, unit, ingredients.name FROM components, ingredients WHERE did = :did AND components.iid = ingredients.iid''', did=did)
+        rows = app.db.execute(''' SELECT DISTINCT did, components.iid, amount, unit, ingredients.name FROM components, ingredients WHERE did = :did AND components.iid = ingredients.iid''', did=did)
         print("rows", rows)
         return rows
 

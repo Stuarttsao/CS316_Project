@@ -318,7 +318,7 @@ def ratings():
         ratings = Ratings.get(current_uid)
         if ratings:
             for rating in ratings:
-                name = Drinks.get_by_did(rating.did).name
+                name = Drinks.get_by_did(rating.did)[0].name
                 ratings_new.append((name, rating))
     return render_template('ratings.html', title='Rating', authenticated=authenticated, ratings=ratings_new)
 
@@ -330,7 +330,7 @@ def menu(uid, menuName, summary, date):
     owned = False
     drinkadd = True
     for did in dids:
-        drink = Drinks.get_by_did(did)
+        drink = Drinks.get_by_did(did)[0]
         drinks.append(drink)
     if current_user.is_authenticated:
         if str(current_user.uid) == str(uid):

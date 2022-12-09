@@ -513,10 +513,12 @@ def explore(list_name):
 'Punch ': 'Punch / Party Drink'}
 
     error = False
-    if list_name not in categories:
+    if list_name == 'drinks':
+        results = Recommendations.get_top_drinks() 
+        return render_template('topdrinklist.html', title='list_name', results=results, list_name=list_name)
+    elif list_name not in categories:
         error = True
         return render_template('recommendations.html', title='Explore', categories=Recommendations.get_unique_categories(), error=error)
 
     results = Recommendations.get_top_drinks_in_category(categories[list_name]) 
-
     return render_template('topdrinklist.html', title='list_name', results=results, list_name=list_name)

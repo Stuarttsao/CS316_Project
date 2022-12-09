@@ -4,12 +4,12 @@
 
   <!-- form to add drink to database -->
 
-    <h2>Add Drink</h2>
+    <h1>Add a Drink to the Growing Database</h1>
 
     <form action="" method="post" novalidate>
       {{ form2.hidden_tag() }}
       <p>
-        {{ form2.search.label }}<br/>
+        <h2>Add Ingredients by searching</h2><br/>
         {{ form2.search(size=32) }}<br/>
         {% for error in form2.search.errors %}
         <span style="color: red;">[{{ error }}]</span>
